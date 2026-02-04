@@ -5,7 +5,28 @@ const token = import.meta.env.VITE_OPENWEATHER_API_KEY;
 export const useWeatherStore = defineStore("weatherStore", {
   state: () => ({}),
   getters: {},
-  actions: {},
+  actions: {
+    async fetchWeatherData(lng: number, lat: number) {
+      try {
+        if (!token) return;
+
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=Metric&appid=${token}`,
+        );
+        const data = await res.json();
+
+        if (res.ok) {
+          return data;
+        } else {
+          console.error("Failed to fetch weather data:", data.message || "Unknown error");
+          return null;
+        }
+      } catch (err) {
+        console.error("Error fetching weather data:", err);
+        return null;
+      }
+    },
+  },
 });
 
 if (import.meta.hot) {

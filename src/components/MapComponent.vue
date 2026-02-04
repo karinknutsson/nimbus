@@ -5,15 +5,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onBeforeMount, onMounted, onUnmounted, ref, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
+import { useWeatherStore } from "src/stores/weather-store";
+import { set } from "@vueuse/core";
 
 const $q = useQuasar();
 const searchStore = useSearchStore();
 const mapStore = useMapStore();
+const weatherStore = useWeatherStore();
 
 let map: any;
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
@@ -30,20 +33,37 @@ const overlayStyle = computed(() => {
   };
 });
 
+const mapStyles = {
+  summer: "mapbox://styles/karinmiriam/cml81pacf000l01qz92u546ju",
+  winter: "mapbox://styles/karinmiriam/cml7yoatg003201s69l3db8kq",
+};
+
+onBeforeMount(async () => {
+  await setMapStyle();
+});
+
+async function setMapStyle() {
+  const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
+
+  if (data.main.temp < 10) {
+    map.setStyle(mapStyles.winter);
+  } else {
+    map.setStyle(mapStyles.summer);
+  }
+}
+
 onMounted(() => {
   map = new mapboxgl.Map({
     container: "map",
-    // purple-cyan-raleway
-    style: "mapbox://styles/karinmiriam/cmaqslh9g00r501s90mydcred",
     zoom: mapStore.zoom,
     center: [mapStore.lng, mapStore.lat],
     accessToken: apiKey ?? "",
   });
 
-  map.on("moveend", () => {
+  map.on("moveend", async () => {
     mapStore.setCoordinates(map.getCenter().lng, map.getCenter().lat);
     mapStore.setZoom(map.getZoom());
-    console.log(map.getCenter().lng, map.getCenter().lat);
+    await setMapStyle();
   });
 });
 

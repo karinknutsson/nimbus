@@ -32,7 +32,7 @@ let buttonElement;
 let buttonMarker: any;
 let buttonSize = { w: 140, h: 56 };
 let buttonId = "";
-const apiKey = process.env.VITE_MAPBOX_API_KEY;
+const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 const mapContainer = ref(null);
 let hoveredFeatureId: string | null = null;
 const x = ref(0);

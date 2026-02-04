@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 
 const MAPBOX_SEARCHBOX_URL = "https://api.mapbox.com/search/searchbox/v1/suggest";
-const token = process.env.VITE_MAPBOX_API_KEY;
+const token = import.meta.env.VITE_MAPBOX_API_KEY;
 
 export const useSearchStore = defineStore("searchStore", {
   state: () => ({

@@ -40,13 +40,85 @@ const mapStyles = {
 async function setMapStyle() {
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
 
-  console.log(data);
-
   if (data.main.temp < 10) {
     map.setStyle(mapStyles.winter);
   } else {
     map.setStyle(mapStyles.summer);
   }
+}
+
+const vertexShader = `#version 300 es
+      in vec2 a_pos;
+
+      void main() {
+        gl_Position = vec4(a_pos, 0.0, 1.0);
+      }
+  `;
+
+const fragmentShader = `#version 300 es
+      precision mediump float;
+
+      uniform float uIntensity;
+      uniform vec2 uResolution;
+
+      out vec4 outColor;
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / uResolution;
+        float fog = smoothstep(0.4, 1.0, uv.y);
+        outColor = vec4(0.8, 0.8, 0.9, fog * uIntensity);
+
+      }
+  `;
+
+function compileShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function createProgram(gl, vertexSource, fragmentSource) {
+  const vs = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
+  const fs = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+
+  if (!vs || !fs) {
+    console.error("Shader compilation failed");
+    return null;
+  }
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Program linking error:", gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+    return null;
+  }
+
+  return program;
+}
+
+function createFullscreenQuad(gl) {
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+    gl.STATIC_DRAW,
+  );
+
+  return buffer;
 }
 
 onMounted(() => {
@@ -59,6 +131,57 @@ onMounted(() => {
   });
 
   setMapStyle();
+
+  map.on("load", () => {
+    map.addLayer({
+      id: "weather-overlay",
+      type: "custom",
+      renderingMode: "2d",
+
+      onAdd: function (map, gl) {
+        this.program = createProgram(gl, vertexShader, fragmentShader);
+
+        if (!this.program) {
+          console.error("WebGL program is null — aborting layer setup");
+          return;
+        }
+
+        this.aPos = gl.getAttribLocation(this.program, "a_pos");
+        this.uIntensity = gl.getUniformLocation(this.program, "uIntensity");
+        this.uResolution = gl.getUniformLocation(this.program, "uResolution");
+        this.buffer = createFullscreenQuad(gl);
+      },
+
+      render: function (gl, matrix) {
+        if (!this.program) return;
+
+        gl.useProgram(this.program);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.enableVertexAttribArray(this.aPos);
+        gl.vertexAttribPointer(this.aPos, 2, gl.FLOAT, false, 0, 0);
+
+        gl.uniform1f(this.uIntensity, 0.6);
+        gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        gl.disableVertexAttribArray(this.aPos);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        map.triggerRepaint();
+      },
+
+      onRemove: function () {
+        if (this.buffer) {
+          gl.deleteBuffer(this.buffer);
+        }
+      },
+    });
+  });
 
   map.on("moveend", async () => {
     mapStore.setCoordinates(map.getCenter().lng, map.getCenter().lat);

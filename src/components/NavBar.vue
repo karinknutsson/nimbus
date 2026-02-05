@@ -5,12 +5,7 @@
     </div>
 
     <div :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'">
-      <div
-        class="meddon"
-        :class="$q.screen.gt.sm ? 'meddon-lowercase-desktop' : 'meddon-lowercase-mobile'"
-      >
-        nimbus
-      </div>
+      <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">Nimbus</div>
     </div>
 
     <div class="about-button-wrapper">
@@ -36,17 +31,8 @@
         v-if="$q.screen.lt.md"
         :class="$q.screen.gt.xs ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'"
       >
-        <div
-          class="meddon capital"
-          :class="$q.screen.gt.xs ? 'meddon-capital-desktop' : 'meddon-capital-mobile'"
-        >
-          æ
-        </div>
-        <div
-          class="meddon"
-          :class="$q.screen.gt.xs ? 'meddon-lowercase-desktop' : 'meddon-lowercase-mobile'"
-        >
-          ther
+        <div :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'">
+          <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">Nimbus</div>
         </div>
       </div>
       <div class="about-text-wrapper">
@@ -345,39 +331,10 @@ button.mobile {
   justify-content: center;
 }
 
-.meddon {
-  font-family: "Meddon", cursive;
-  margin: 0;
-}
-
-.capital {
-  text-transform: uppercase;
-}
-
-.meddon-capital-desktop {
-  font-size: 56px;
-  transform: translate(8px, 8px);
-}
-
-.meddon-lowercase-desktop {
-  font-size: 56px;
-  transform: translateX(-9px);
-}
-
 .logo-wrapper-mobile {
   transform: translateY(4px);
   display: flex;
   justify-content: center;
-}
-
-.meddon-capital-mobile {
-  font-size: 36px;
-  transform: translate(5px, 5px);
-}
-
-.meddon-lowercase-mobile {
-  font-size: 36px;
-  transform: translateX(-6px);
 }
 
 .search-wrapper {

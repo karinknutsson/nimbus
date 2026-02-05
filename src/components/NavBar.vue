@@ -4,7 +4,10 @@
       <SearchBar />
     </div>
 
-    <div :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'">
+    <div
+      class="logo-wrapper"
+      :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'"
+    >
       <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">Nimbus</div>
     </div>
 
@@ -29,6 +32,7 @@
       </div>
       <div
         v-if="$q.screen.lt.md"
+        class="logo-wrapper"
         :class="$q.screen.gt.xs ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'"
       >
         <div :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'">

@@ -11,6 +11,8 @@ import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
+import vertexShader from "src/shaders/fog/vertexShader.glsl?raw";
+import fragmentShader from "src/shaders/fog/fragmentShader.glsl?raw";
 
 const $q = useQuasar();
 const searchStore = useSearchStore();
@@ -46,30 +48,6 @@ async function setMapStyle() {
     map.setStyle(mapStyles.summer);
   }
 }
-
-const vertexShader = `#version 300 es
-      in vec2 a_pos;
-
-      void main() {
-        gl_Position = vec4(a_pos, 0.0, 1.0);
-      }
-  `;
-
-const fragmentShader = `#version 300 es
-      precision mediump float;
-
-      uniform float uIntensity;
-      uniform vec2 uResolution;
-
-      out vec4 outColor;
-
-      void main() {
-        vec2 uv = gl_FragCoord.xy / uResolution;
-        float fog = smoothstep(0.4, 1.0, uv.y);
-        outColor = vec4(0.8, 0.8, 0.9, fog * uIntensity);
-
-      }
-  `;
 
 function compileShader(gl, type, source) {
   const shader = gl.createShader(type);

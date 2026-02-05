@@ -318,7 +318,8 @@ button.mobile {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
+  margin: 6px 0 12px 0;
+  // background: magenta;
 }
 
 .navbar-container {

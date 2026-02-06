@@ -16,7 +16,7 @@ import fogFragmentShader from "src/shaders/atmosphere/fogFragmentShader.glsl?raw
 import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?raw";
 import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
 import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?raw";
-import rainFragmentShader from "src/shaders/atmosphere/rainFragmentShader.glsl?raw";
+import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
 const $q = useQuasar();
@@ -139,6 +139,9 @@ async function setMapStyle() {
       case "Dust":
       case "Sand":
         addShaderLayer("dustLayer", atmosphereVertexShader, dustFragmentShader);
+        break;
+      case "Haze":
+        addShaderLayer("hazeLayer", atmosphereVertexShader, hazeFragmentShader);
         break;
       case "Rain":
         addShaderLayer("rainLayer", atmosphereVertexShader, rainFragmentShader);

@@ -147,17 +147,6 @@ async function setMapStyle() {
         removeLayerIfExists(currentLayerId);
         break;
     }
-
-    if (data.weather[0].main === "Fog") {
-      addShaderLayer("fogLayer", atmosphereVertexShader, fogFragmentShader);
-    } else if (data.weather[0].main === "Mist") {
-      addShaderLayer("mistLayer", atmosphereVertexShader, dustFragmentShader);
-    } else if (data.weather[0].main === "Rain") {
-      addShaderLayer("rainLayer", atmosphereVertexShader, rainFragmentShader);
-    } else {
-      addShaderLayer("hazeLayer", atmosphereVertexShader, hazeFragmentShader);
-      // removeLayerIfExists(currentLayerId);
-    }
   }
 
   if (currentStyle !== displayedStyle) {

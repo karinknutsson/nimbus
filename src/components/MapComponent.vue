@@ -14,6 +14,7 @@ import { useWeatherStore } from "src/stores/weather-store";
 import atmosphereVertexShader from "src/shaders/atmosphere/vertexShader.glsl?raw";
 import fogFragmentShader from "src/shaders/atmosphere/fogFragmentShader.glsl?raw";
 import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?raw";
+import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
 import rainFragmentShader from "src/shaders/atmosphere/rainFragmentShader.glsl?raw";
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
@@ -135,7 +136,8 @@ async function setMapStyle() {
     } else if (data.weather[0].main === "Rain") {
       addShaderLayer("rainLayer", atmosphereVertexShader, rainFragmentShader);
     } else {
-      removeLayerIfExists(currentLayerId);
+      addShaderLayer("hazeLayer", atmosphereVertexShader, hazeFragmentShader);
+      // removeLayerIfExists(currentLayerId);
     }
   }
 

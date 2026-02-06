@@ -10,5 +10,5 @@ out vec4 outColor;
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
     float opacity = distance(uv, vec2(0.5));
-    outColor = vec4(0.8, 0.8, 0.8, opacity);
+    outColor = vec4(0.7, 0.7, 0.7, opacity);
 }

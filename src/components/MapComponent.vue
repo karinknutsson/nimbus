@@ -63,6 +63,8 @@ function removeLayerIfExists(layerId) {
 function addShaderLayer(layerId, vertexShader, fragmentShader) {
   removeLayerIfExists(currentLayerId);
 
+  let startTime = performance.now();
+
   map.addLayer({
     id: layerId,
     type: "custom",
@@ -73,42 +75,54 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 
       if (!this.program) return;
 
+      // Set attributes and uniforms
       this.aPos = gl.getAttribLocation(this.program, "a_pos");
       this.uIntensity = gl.getUniformLocation(this.program, "uIntensity");
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
-      this.uTexture = gl.getUniformLocation(this.program, "uTexture");
+
+      if (texturePath) {
+        this.uTexture = gl.getUniformLocation(this.program, "uTexture");
+        this.uTime = gl.getUniformLocation(this.program, "uTime");
+      }
+
       this.buffer = createFullscreenQuad(gl);
 
-      this.texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, this.texture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        1,
-        1,
-        0,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        new Uint8Array([0, 0, 255, 255]),
-      );
-
-      const image = new Image();
-      image.src = "./noise-textures/Perlin23-512x512.png";
-      image.onload = () => {
+      // Load texture if needed
+      if (texturePath) {
+        this.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      };
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          1,
+          1,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          new Uint8Array([0, 0, 255, 255]),
+        );
+
+        const image = new Image();
+        image.src = texturePath;
+        image.onload = () => {
+          gl.bindTexture(gl.TEXTURE_2D, this.texture);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+          gl.generateMipmap(gl.TEXTURE_2D);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        };
+      }
     },
 
     render: function (gl, _) {
       if (!this.program) return;
 
       gl.useProgram(this.program);
+
+      const time = (performance.now() - startTime) * 0.001;
+      gl.uniform1f(this.uTime, time);
 
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -172,8 +186,10 @@ async function setMapStyle() {
         addShaderLayer("fogLayer", atmosphereVertexShader, fogFragmentShader);
         break;
       case "Mist":
-        texturePath = "";
-        addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
+        texturePath = "./noise-textures/Perlin23-512x512.png";
+        addShaderLayer("asjLayer", atmosphereVertexShader, ashFragmentShader);
+        // texturePath = "";
+        // addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
         break;
       case "Dust":
       case "Sand":

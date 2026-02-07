@@ -2,7 +2,6 @@
 
 precision mediump float;
 
-uniform float uIntensity;
 uniform vec2 uResolution;
 
 out vec4 outColor;

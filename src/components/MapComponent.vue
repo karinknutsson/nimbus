@@ -11,12 +11,16 @@ import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
+
 import atmosphereVertexShader from "src/shaders/atmosphere/vertexShader.glsl?raw";
 import fogFragmentShader from "src/shaders/atmosphere/fogFragmentShader.glsl?raw";
 import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?raw";
 import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
 import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?raw";
+import ashFragmentShader from "src/shaders/atmosphere/ashFragmentShader.glsl?raw";
+
 import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
+
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
 const $q = useQuasar();
@@ -70,13 +74,43 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       this.aPos = gl.getAttribLocation(this.program, "a_pos");
       this.uIntensity = gl.getUniformLocation(this.program, "uIntensity");
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
+      this.uTexture = gl.getUniformLocation(this.program, "uTexture");
       this.buffer = createFullscreenQuad(gl);
+
+      this.texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        1,
+        1,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        new Uint8Array([0, 0, 255, 255]),
+      );
+
+      const image = new Image();
+      image.src = "./noise-textures/Perlin16-512x512.png";
+      image.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      };
     },
 
     render: function (gl, _) {
       if (!this.program) return;
 
       gl.useProgram(this.program);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.uniform1i(this.uTexture, 0);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.enableVertexAttribArray(this.aPos);
@@ -134,7 +168,8 @@ async function setMapStyle() {
         addShaderLayer("fogLayer", atmosphereVertexShader, fogFragmentShader);
         break;
       case "Mist":
-        addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
+        // addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
+        addShaderLayer("mistLayer", atmosphereVertexShader, ashFragmentShader);
         break;
       case "Dust":
       case "Sand":

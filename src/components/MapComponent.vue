@@ -160,7 +160,7 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 async function setMapStyle() {
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
 
-  console.log(data.weather[0].main);
+  console.log(data.weather[0]);
 
   let currentStyle;
 
@@ -186,10 +186,8 @@ async function setMapStyle() {
         addShaderLayer("fogLayer", atmosphereVertexShader, fogFragmentShader);
         break;
       case "Mist":
-        texturePath = "./noise-textures/SuperPerlin2-512x512.png";
-        addShaderLayer("smokeLayer", atmosphereVertexShader, smokeFragmentShader);
-        // texturePath = "";
-        // addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
+        texturePath = "";
+        addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
         break;
       case "Dust":
       case "Sand":

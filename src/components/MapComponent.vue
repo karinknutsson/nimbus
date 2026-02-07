@@ -18,6 +18,7 @@ import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?r
 import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
 import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?raw";
 import ashFragmentShader from "src/shaders/atmosphere/ashFragmentShader.glsl?raw";
+import smokeFragmentShader from "src/shaders/atmosphere/smokeFragmentShader.glsl?raw";
 
 import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
 
@@ -32,6 +33,7 @@ let map;
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 let currentLayerId = null;
 let displayedStyle = null;
+let texturePath = "";
 const x = ref(0);
 const y = ref(0);
 const showOverlay = ref(false);
@@ -164,24 +166,35 @@ async function setMapStyle() {
 
   function setShader() {
     switch (data.weather[0].main) {
+      // Atmospheric conditions
       case "Fog":
+        texturePath = "";
         addShaderLayer("fogLayer", atmosphereVertexShader, fogFragmentShader);
         break;
       case "Mist":
+        texturePath = "";
         addShaderLayer("mistLayer", atmosphereVertexShader, mistFragmentShader);
         break;
       case "Dust":
       case "Sand":
+        texturePath = "";
         addShaderLayer("dustLayer", atmosphereVertexShader, dustFragmentShader);
         break;
       case "Haze":
+        texturePath = "";
         addShaderLayer("hazeLayer", atmosphereVertexShader, hazeFragmentShader);
         break;
+      case "Ash":
+        texturePath = "./noise-textures/Perlin23-512x512.png";
+        addShaderLayer("asjLayer", atmosphereVertexShader, ashFragmentShader);
+        break;
+      case "Smoke":
+        texturePath = "./noise-textures/SuperPerlin2-512x512.png";
+        addShaderLayer("smokeLayer", atmosphereVertexShader, smokeFragmentShader);
+        break;
+      // Precipitation
       case "Rain":
         addShaderLayer("rainLayer", atmosphereVertexShader, rainFragmentShader);
-        break;
-      case "Ash":
-        addShaderLayer("mistLayer", atmosphereVertexShader, ashFragmentShader);
         break;
       default:
         removeLayerIfExists(currentLayerId);

@@ -21,7 +21,8 @@ import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?r
 import ashFragmentShader from "src/shaders/atmosphere/ashFragmentShader.glsl?raw";
 import smokeFragmentShader from "src/shaders/atmosphere/smokeFragmentShader.glsl?raw";
 
-import overcastFragmentShader from "src/shaders/clouds/overcastFragmentShader.glsl?raw";
+import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragmentShader.glsl?raw";
+import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragmentShader.glsl?raw";
 
 import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
 
@@ -211,8 +212,10 @@ async function setMapStyle() {
         break;
       // Clouds
       case "Clouds":
-        texturePath = "./noise-textures/Milky6-512x512.png";
-        addShaderLayer("overcastLayer", vertexShader, overcastFragmentShader);
+        // texturePath = "./noise-textures/Milky6-512x512.png";
+        texturePath = "./noise-textures/Milky7-512x512.png";
+        // addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
+        addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
         break;
       // Precipitation
       case "Rain":

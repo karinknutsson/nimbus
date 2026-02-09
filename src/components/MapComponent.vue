@@ -195,9 +195,6 @@ async function setMapStyle() {
       case "Mist":
         texturePath = "";
         addShaderLayer("mistLayer", vertexShader, mistFragmentShader);
-
-        texturePath = "./noise-textures/Milky7-512x512.png";
-        addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
         break;
       case "Dust":
       case "Sand":
@@ -216,13 +213,12 @@ async function setMapStyle() {
         texturePath = "./noise-textures/SuperPerlin2-512x512.png";
         addShaderLayer("smokeLayer", vertexShader, smokeFragmentShader);
         break;
+
       // Clouds
       case "Clouds":
         if (data.weather[0].description.includes("overcast")) {
-          // texturePath = "./noise-textures/Milky6-512x512.png";
-          // addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
           texturePath = "./noise-textures/Milky6-512x512.png";
-          addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
+          addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
         } else if (data.weather[0].description.includes("broken")) {
           texturePath = "./noise-textures/Milky7-512x512.png";
           addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
@@ -233,8 +229,8 @@ async function setMapStyle() {
           texturePath = "./noise-textures/Milky6-512x512.png";
           addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
         }
-
         break;
+
       // Precipitation
       case "Rain":
         addShaderLayer("rainLayer", vertexShader, rainFragmentShader);

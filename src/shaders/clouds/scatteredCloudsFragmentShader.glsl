@@ -23,7 +23,7 @@ vec2 rotateUv(vec2 uv, float angle, vec2 center) {
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
-    vec2 speed = vec2(-0.002, -0.001);
+    vec2 speed = vec2(0.002, 0.001);
     vec2 movingUv = uv + speed * uTime;
 
     movingUv = rotateUv(movingUv, uTime * 0.003, vec2(0.5));

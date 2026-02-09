@@ -3,9 +3,15 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 const token = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 export const useWeatherStore = defineStore("weatherStore", {
-  state: () => ({}),
+  state: () => ({
+    currentTemp: null,
+  }),
   getters: {},
   actions: {
+    setCurrentTemp(temp) {
+      this.currentTemp = temp;
+    },
+
     async fetchWeatherData(lng, lat) {
       try {
         if (!token) return;

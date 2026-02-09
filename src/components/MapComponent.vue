@@ -186,7 +186,10 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 async function setMapStyle() {
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
 
-  console.log(data.weather[0]);
+  if (!data) return;
+
+  weatherStore.setCurrentTemp(Math.round(data.main.temp));
+  console.log(data);
 
   let currentStyle;
 

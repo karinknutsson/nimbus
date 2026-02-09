@@ -8,7 +8,9 @@
       class="logo-wrapper"
       :class="$q.screen.gt.sm ? 'logo-wrapper-desktop' : 'logo-wrapper-mobile'"
     >
-      <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">Nimbus</div>
+      <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">
+        {{ weatherStore.currentTemp + "°" }}
+      </div>
     </div>
 
     <div v-if="!showAboutPopup" class="about-button-wrapper">
@@ -55,7 +57,9 @@ import { useSearchStore } from "src/stores/search-store";
 import { computed, ref, watch, onMounted, nextTick } from "vue";
 import { aboutText } from "./about-text";
 import { onClickOutside } from "@vueuse/core";
+import { useWeatherStore } from "../stores/weather-store";
 
+const weatherStore = useWeatherStore();
 const searchStore = useSearchStore();
 const $q = useQuasar();
 const emit = defineEmits(["openPopup", "closePopup"]);

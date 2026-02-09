@@ -222,15 +222,15 @@ async function setMapStyle() {
           // texturePath = "./noise-textures/Milky6-512x512.png";
           // addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
           texturePath = "./noise-textures/Milky6-512x512.png";
-          addShaderLayer("scatteredCloudsLayer", vertexShader, scatteredCloudsFragmentShader);
+          addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
         } else if (data.weather[0].description.includes("broken")) {
           texturePath = "./noise-textures/Milky7-512x512.png";
           addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
         } else if (data.weather[0].description.includes("scattered")) {
-          texturePath = "./noise-textures/Milky11-512x512.png";
+          texturePath = "./noise-textures/Milky6-512x512.png";
           addShaderLayer("scatteredCloudsLayer", vertexShader, scatteredCloudsFragmentShader);
         } else {
-          texturePath = "./noise-textures/Milky10-512x512.png";
+          texturePath = "./noise-textures/Milky6-512x512.png";
           addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
         }
 

@@ -144,11 +144,12 @@ watch(searchTerm, async (value) => {
   } else {
     await searchStore.fetchSuggestions(value);
 
-    if (searchStore.suggestions.length) {
-      gsap.set(".search-suggestions", {
-        width: searchBarFullWidth.value,
-      });
-    }
+    // if (searchStore.suggestions.length) {
+
+    //   gsap.set(".search-suggestions", {
+    //     width: searchBarFullWidth.value,
+    //   });
+    // }
   }
 });
 
@@ -227,9 +228,8 @@ li {
 
 .search-bar {
   pointer-events: auto;
-  background: v-bind(searchBarBackground);
-  // box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-  border-radius: 2px;
+  background: #ffde90;
+  border-radius: 8px;
   width: 136px;
   height: 56px;
   padding: 0 8px;
@@ -248,9 +248,8 @@ li {
   z-index: 5002;
   top: 96px;
   left: 4vw;
-  background: rgba(255, 255, 255, 0.7);
-  // box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-  border-radius: 2px;
+  background: #ffde90;
+  border-radius: 8px;
 }
 
 .search-input {
@@ -297,6 +296,12 @@ body.screen--sm,
 body.screen--xs {
   .search-bar {
     width: 100%;
+  }
+
+  .search-suggestions {
+    top: unset;
+    bottom: 120px;
+    width: 92vw;
   }
   // .search-bar {
   //   width: 44px;

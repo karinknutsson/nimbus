@@ -180,6 +180,7 @@ async function setMapStyle() {
   if (!data) return;
 
   weatherStore.setCurrentTemp(Math.round(data.main.temp));
+  weatherStore.setCurrentFeelsLikeTemp(Math.round(data.main.feels_like));
   weatherStore.setCurrentLocation(data.name);
   windStrength = data.wind.speed;
   console.log(data);

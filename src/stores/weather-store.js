@@ -5,12 +5,17 @@ const token = import.meta.env.VITE_OPENWEATHER_API_KEY;
 export const useWeatherStore = defineStore("weatherStore", {
   state: () => ({
     currentTemp: null,
+    currentFeelsLikeTemp: null,
     currentLocation: null,
   }),
   getters: {},
   actions: {
     setCurrentTemp(temp) {
       this.currentTemp = temp;
+    },
+
+    setCurrentFeelsLikeTemp(temp) {
+      this.currentFeelsLikeTemp = temp;
     },
 
     setCurrentLocation(location) {

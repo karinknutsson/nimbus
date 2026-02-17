@@ -4,6 +4,7 @@ const token = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 export const useWeatherStore = defineStore("weatherStore", {
   state: () => ({
+    weatherType: "",
     airTemp: "",
     feelsLikeTemp: "",
     feelsLikeDescription: "",
@@ -14,6 +15,10 @@ export const useWeatherStore = defineStore("weatherStore", {
   }),
   getters: {},
   actions: {
+    setWeatherType(type) {
+      this.weatherType = type;
+    },
+
     setAirTemp(temp) {
       this.airTemp = temp;
     },

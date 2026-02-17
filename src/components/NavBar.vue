@@ -3,10 +3,14 @@
     <div class="temp-wrapper">
       <div class="weather-description-wrapper">
         <!-- <div class="feels-like-description">{{ weatherStore.feelsLikeDescription }}</div> -->
+        <div class="weather-description">{{ weatherStore.weatherType }}</div>
         <div class="weather-description">{{ "Air temp " + weatherStore.airTemp + "°" }}</div>
         <div class="weather-description">{{ weatherStore.windDescription + " wind" }}</div>
       </div>
-      <div class="feels-like-temp-wrapper">{{ weatherStore.feelsLikeTemp + "°" }}</div>
+      <div class="feels-like-container">
+        <div class="feels-like-description">Feels like</div>
+        <div class="feels-like-temp-wrapper">{{ weatherStore.feelsLikeTemp + "°" }}</div>
+      </div>
     </div>
 
     <div class="search-wrapper">
@@ -123,14 +127,11 @@ const $q = useQuasar();
   align-items: flex-start;
   justify-content: flex-start;
   // border: 1px dotted white;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 2px;
-}
-
-.feels-like-temp-wrapper {
-  font-size: 3rem;
-  font-weight: 800;
+  gap: 32px;
+  background: #ffde90;
+  border-radius: 8px;
+  pointer-events: auto;
+  padding: 16px;
 }
 
 .weather-description-wrapper {
@@ -139,14 +140,29 @@ const $q = useQuasar();
   gap: 4px;
 }
 
+.feels-like-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
 .feels-like-description {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.feels-like-temp-wrapper {
+  font-size: 3.4rem;
+  font-weight: 900;
+  line-height: 2.6rem;
+  // border: 1px dotted red;
 }
 
 .weather-description {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .search-wrapper {

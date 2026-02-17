@@ -12,22 +12,22 @@ import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
 
-import vertexShader from "src/shaders/vertexShader.glsl?raw";
+import vertexShader from "src/shaders/vertex.glsl?raw";
 
-import fogFragmentShader from "src/shaders/atmosphere/fogFragmentShader.glsl?raw";
-import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?raw";
-import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
-import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?raw";
-import ashFragmentShader from "src/shaders/atmosphere/ashFragmentShader.glsl?raw";
-import smokeFragmentShader from "src/shaders/atmosphere/smokeFragmentShader.glsl?raw";
+import fogFragmentShader from "src/shaders/atmosphere/fogFragment.glsl?raw";
+import mistFragmentShader from "src/shaders/atmosphere/mistFragment.glsl?raw";
+import hazeFragmentShader from "src/shaders/atmosphere/hazeFragment.glsl?raw";
+import dustFragmentShader from "src/shaders/atmosphere/dustFragment.glsl?raw";
+import ashFragmentShader from "src/shaders/atmosphere/ashFragment.glsl?raw";
+import smokeFragmentShader from "src/shaders/atmosphere/smokeFragment.glsl?raw";
 
-import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragmentShader.glsl?raw";
-import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragmentShader.glsl?raw";
-import scatteredCloudsFragmentShader from "src/shaders/clouds/scatteredCloudsFragmentShader.glsl?raw";
-import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragmentShader.glsl?raw";
+import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragment.glsl?raw";
+import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragment.glsl?raw";
+import scatteredCloudsFragmentShader from "src/shaders/clouds/scatteredCloudsFragment.glsl?raw";
+import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragment.glsl?raw";
 
-import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
-import drizzleFragmentShader from "src/shaders/rain/drizzleFragmentShader.glsl?raw";
+import rainFragmentShader from "src/shaders/rain/rainFragment.glsl?raw";
+import drizzleFragmentShader from "src/shaders/rain/drizzleFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
@@ -207,11 +207,14 @@ async function setMapStyle() {
     currentStyle = "desert";
   }
 
-  const testWeather = "Rain";
+  // const weatherMain = data.weather[0].main;
+  // const weatherDescription = data.weather[0].description;
+
+  const weatherMain = "Clouds";
+  const weatherDescription = "broken clouds";
 
   function setShader() {
-    switch (data.weather[0].main) {
-      // switch (testWeather) {
+    switch (weatherMain) {
       // Atmospheric conditions
       case "Fog":
         texturePaths = [];
@@ -241,13 +244,13 @@ async function setMapStyle() {
 
       // Clouds
       case "Clouds":
-        if (data.weather[0].description.includes("overcast")) {
+        if (weatherDescription.includes("overcast")) {
           texturePaths = ["./noise-textures/Milky6-512x512.png"];
           addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
-        } else if (data.weather[0].description.includes("broken")) {
-          texturePaths = ["./noise-textures/Milky7-512x512.png"];
+        } else if (weatherDescription.includes("broken")) {
+          texturePaths = ["./noise-textures/Milky6-512x512.png"];
           addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
-        } else if (data.weather[0].description.includes("scattered")) {
+        } else if (weatherDescription.includes("scattered")) {
           texturePaths = ["./noise-textures/Milky6-512x512.png"];
           addShaderLayer("scatteredCloudsLayer", vertexShader, scatteredCloudsFragmentShader);
         } else {

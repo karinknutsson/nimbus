@@ -8,7 +8,7 @@ export const useWeatherStore = defineStore("weatherStore", {
     feelsLikeTemp: "",
     feelsLikeDescription: "",
     windSpeed: "",
-    windSpeedDescription: "",
+    windDescription: "",
     location: "",
   }),
   getters: {},

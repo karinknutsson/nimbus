@@ -6,9 +6,11 @@
     <div></div>
 
     <div class="temp-wrapper">
-      <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">
-        {{ weatherStore.feelsLikeTemp + "°" }}
-        {{ weatherStore.windSpeed }}
+      <div class="feels-like-temp-wrapper">{{ weatherStore.feelsLikeTemp + "°" }}</div>
+      <div class="weather-description-wrapper">
+        <div>{{ weatherStore.feelsLikeDescription }}</div>
+        <div>{{ "Air temp " + weatherStore.airTemp + "°" }}</div>
+        <div>{{ weatherStore.windDescription }}</div>
       </div>
     </div>
   </div>
@@ -123,7 +125,21 @@ button.mobile {
 
 .temp-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+}
+
+.feels-like-temp-wrapper {
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.weather-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .search-wrapper {

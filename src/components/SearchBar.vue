@@ -12,7 +12,7 @@
           id="searchTerm"
           v-model="searchTerm"
           type="text"
-          :placeholder="$q.screen.gt.xs ? 'Search' : ''"
+          placeholder="Search"
           @focus="onOpenSearch"
           @blur="onBlurSearch"
         />
@@ -71,14 +71,6 @@ const searchBarFullWidth = computed(() => {
   }
 });
 
-onMounted(() => {
-  // if ($q.screen.gt.sm) {
-  gsap.set(".search-input", {
-    padding: "6px 8px",
-  });
-  // }
-});
-
 function clearSearchTerm() {
   searchTerm.value = "";
   searchStore.suggestions = [];
@@ -96,18 +88,10 @@ async function onOpenSearch() {
   searchStore.isSearchOpen = true;
   isSearchFocused.value = true;
 
-  const delay = $q.screen.lt.md ? 0.2 : 0;
-
   gsap.to(".search-bar", {
     duration: 0.3,
     width: searchBarFullWidth.value,
     ease: "power2.out",
-    delay,
-  });
-
-  gsap.to(".search-input", {
-    padding: "6px 8px",
-    duration: 0.1,
     delay: 0.2,
   });
 
@@ -175,10 +159,10 @@ watch(searchBarFullWidth, () => {
   //     duration: 0.1,
   //   });
   // } else {
-  gsap.to(".search-input", {
-    padding: "6px 8px",
-    duration: 0.1,
-  });
+  // gsap.to(".search-input", {
+  //   padding: "6px 8px",
+  //   duration: 0.1,
+  // });
   // }
 
   if (searchStore.isSearchOpen) {
@@ -273,7 +257,7 @@ li {
   background: transparent;
   color: #0d0d0d;
   border: 0;
-  padding: 0;
+  padding: 6px 8px;
   font-size: 16px;
   font-weight: 600;
   width: 100%;
@@ -311,6 +295,9 @@ i {
 
 body.screen--sm,
 body.screen--xs {
+  .search-bar {
+    width: 100%;
+  }
   // .search-bar {
   //   width: 44px;
   //   height: 44px;

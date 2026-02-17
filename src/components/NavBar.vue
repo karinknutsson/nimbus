@@ -44,29 +44,29 @@ const $q = useQuasar();
 //   });
 // }
 
-watch(
-  () => $q.screen.gt.sm,
-  (isDesktop) => {
-    if (isDesktop) {
-      handleCloseSearch();
-    } else if (searchStore.isSearchOpen) {
-      handleOpenSearch();
-    }
-  },
-);
+// watch(
+//   () => $q.screen.gt.sm,
+//   (isDesktop) => {
+//     if (isDesktop) {
+//       handleCloseSearch();
+//     } else if (searchStore.isSearchOpen) {
+//       handleOpenSearch();
+//     }
+//   },
+// );
 
-watch(
-  () => searchStore.isSearchOpen,
-  (isOpen) => {
-    if ($q.screen.gt.sm) return;
+// watch(
+//   () => searchStore.isSearchOpen,
+//   (isOpen) => {
+//     if ($q.screen.gt.sm) return;
 
-    if (isOpen) {
-      handleOpenSearch();
-    } else {
-      handleCloseSearch();
-    }
-  },
-);
+//     if (isOpen) {
+//       handleOpenSearch();
+//     } else {
+//       handleCloseSearch();
+//     }
+//   },
+// );
 </script>
 
 <style scoped lang="scss">
@@ -150,7 +150,7 @@ watch(
 }
 
 .search-wrapper {
-  align-self: flex-start;
+  // align-self: flex-start;
   // border: 1px dotted white;
 }
 

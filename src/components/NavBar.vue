@@ -5,50 +5,13 @@
     </div>
     <div></div>
 
-    <div
-      class="temp-wrapper"
-      :class="$q.screen.gt.sm ? 'temp-wrapper-desktop' : 'temp-wrapper-mobile'"
-    >
+    <div class="temp-wrapper">
       <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">
         {{ weatherStore.feelsLikeTemp + "°" }}
         {{ weatherStore.windSpeed }}
       </div>
     </div>
-
-    <!-- <div v-if="!showAboutPopup" class="about-button-wrapper">
-      <button
-        type="button"
-        class="nav-btn"
-        :class="$q.screen.gt.sm ? 'desktop' : 'mobile'"
-        @click="handleOpenAboutPopup"
-      >
-        <template v-if="$q.screen.gt.sm">About</template
-        ><i v-else class="pi pi-info-circle icon"></i>
-      </button>
-    </div> -->
   </div>
-  <!-- <div ref="aboutPopupRef" class="about-popup">
-    <template v-if="showAboutPopupText">
-      <div class="close-wrapper">
-        <button type="button" class="close-button flex-center" @click="handleCloseAboutPopup">
-          <i class="pi pi-times icon"></i>
-        </button>
-      </div>
-      <div
-        v-if="$q.screen.lt.md"
-        class="temp-wrapper"
-        :class="$q.screen.gt.xs ? 'temp-wrapper-desktop' : 'temp-wrapper-mobile'"
-      >
-        <div :class="$q.screen.gt.sm ? 'temp-wrapper-desktop' : 'temp-wrapper-mobile'">
-          <div :class="$q.screen.gt.sm ? 'logo' : 'logo-mobile'">Nimbus</div>
-        </div>
-      </div>
-      <div class="about-text-wrapper">
-        <p>{{ aboutText[0] }}</p>
-        <p>{{ aboutText[1] }}</p>
-      </div>
-    </template>
-  </div> -->
 </template>
 
 <script setup>
@@ -56,59 +19,14 @@ import { useQuasar } from "quasar";
 import SearchBar from "./SearchBar.vue";
 import gsap from "gsap";
 import { useSearchStore } from "src/stores/search-store";
-import { computed, ref, watch, onMounted, nextTick } from "vue";
-import { aboutText } from "./about-text";
-import { onClickOutside } from "@vueuse/core";
+import { watch } from "vue";
 import { useWeatherStore } from "../stores/weather-store";
 
 const weatherStore = useWeatherStore();
 const searchStore = useSearchStore();
 const $q = useQuasar();
-const emit = defineEmits(["openPopup", "closePopup"]);
-const showAboutPopup = ref(true);
-const showAboutPopupText = ref(false);
-const aboutPopupRef = ref(null);
-const aboutPopupFullHeight = ref(0);
-
-const aboutPopupFullWidth = computed(() => {
-  if ($q.screen.lt.md) {
-    return "92vw";
-  } else if ($q.screen.md) {
-    return "340px";
-  } else {
-    return "420px";
-  }
-});
-
-onMounted(async () => {
-  await nextTick();
-  if (aboutPopupRef.value) aboutPopupFullHeight.value = aboutPopupRef.value.offsetHeight;
-});
-
-onClickOutside(aboutPopupRef, () => {
-  if (showAboutPopup.value) handleCloseAboutPopup();
-});
-
-function hideLogo() {
-  gsap.to(".temp-wrapper", {
-    duration: 0.2,
-    opacity: 0,
-    ease: "power2.out",
-  });
-}
-
-function showLogo(delay) {
-  gsap.to(".temp-wrapper", {
-    duration: 0.2,
-    opacity: 1,
-    ease: "power2.out",
-    delay,
-  });
-}
 
 function handleOpenSearch() {
-  hideLogo();
-
   gsap.to(".nav-btn", {
     duration: 0.2,
     opacity: 0,
@@ -117,139 +35,12 @@ function handleOpenSearch() {
 }
 
 function handleCloseSearch() {
-  showLogo(0.3);
-
   gsap.to(".nav-btn", {
     duration: 0.2,
     opacity: 1,
     ease: "power2.out",
     delay: 0.3,
   });
-}
-
-function handleOpenAboutPopup() {
-  setTimeout(() => {
-    showAboutPopup.value = true;
-  }, 300);
-
-  setTimeout(() => {
-    showAboutPopupText.value = true;
-  }, 800);
-
-  emit("openPopup");
-
-  if ($q.screen.lt.md) {
-    hideLogo();
-
-    gsap.to(".search-wrapper", {
-      duration: 0.2,
-      opacity: 0,
-      ease: "power2.out",
-    });
-  }
-
-  gsap.to(".about-popup", {
-    duration: 0.1,
-    opacity: 1,
-    ease: "power2.out",
-    delay: 0.2,
-  });
-
-  gsap.to(".about-popup", {
-    duration: 0.3,
-    width: aboutPopupFullWidth.value,
-    ease: "power2.out",
-    delay: 0.3,
-  });
-
-  gsap.to(".about-popup", {
-    duration: 0.4,
-    height: aboutPopupFullHeight.value + "px",
-    ease: "power2.out",
-    delay: 0.45,
-  });
-
-  gsap.set(".about-popup", {
-    height: "auto",
-    delay: 0.85,
-  });
-}
-
-function handleCloseAboutPopup() {
-  showAboutPopupText.value = false;
-
-  setTimeout(() => {
-    showAboutPopup.value = false;
-  }, 400);
-
-  if (aboutPopupRef.value) {
-    gsap.set(aboutPopupRef.value, {
-      height: aboutPopupFullHeight.value + "px",
-    });
-  }
-
-  emit("closePopup");
-
-  if ($q.screen.lt.md) {
-    showLogo(0.5);
-
-    gsap.to(".search-wrapper", {
-      duration: 0.2,
-      opacity: 1,
-      ease: "power2.out",
-      delay: 0.4,
-    });
-  }
-
-  const width = $q.screen.gt.sm ? "140px" : "44px";
-  const height = $q.screen.gt.sm ? "56px" : "44px";
-
-  gsap.to(".about-popup", {
-    duration: 0.1,
-    opacity: 0,
-    ease: "power2.out",
-    delay: 0.45,
-  });
-
-  gsap.to(".about-popup", {
-    duration: 0.2,
-    width,
-    ease: "power2.out",
-    delay: 0.3,
-  });
-
-  gsap.to(".about-popup", {
-    duration: 0.3,
-    height: height,
-    ease: "power2.out",
-  });
-}
-
-function setInfoWidth(isDesktop) {
-  gsap.to(".about-popup", {
-    duration: 0.2,
-    width: aboutPopupFullWidth.value,
-    ease: "power2.out",
-  });
-
-  if (isDesktop) {
-    showLogo(0.5);
-
-    gsap.to(".search-wrapper", {
-      duration: 0.2,
-      opacity: 1,
-      ease: "power2.out",
-      delay: 0.4,
-    });
-  } else {
-    hideLogo();
-
-    gsap.to(".search-wrapper", {
-      duration: 0.2,
-      opacity: 0,
-      ease: "power2.out",
-    });
-  }
 }
 
 watch(
@@ -260,8 +51,6 @@ watch(
     } else if (searchStore.isSearchOpen) {
       handleOpenSearch();
     }
-
-    if (showAboutPopup.value) setInfoWidth(isDesktop);
   },
 );
 
@@ -277,20 +66,6 @@ watch(
     }
   },
 );
-
-watch(aboutPopupFullHeight, (value) => {
-  if (value) {
-    const width = $q.screen.gt.sm ? "140px" : "44px";
-    const height = $q.screen.gt.sm ? "56px" : "44px";
-
-    gsap.set(".about-popup", {
-      width,
-      height,
-    });
-
-    showAboutPopup.value = false;
-  }
-});
 </script>
 
 <style scoped lang="scss">
@@ -346,14 +121,7 @@ button.mobile {
   pointer-events: none;
 }
 
-.temp-wrapper-desktop {
-  transform: translateY(7px);
-  display: flex;
-  justify-content: center;
-}
-
-.temp-wrapper-mobile {
-  transform: translateY(4px);
+.temp-wrapper {
   display: flex;
   justify-content: center;
 }
@@ -362,38 +130,7 @@ button.mobile {
   justify-self: start;
 }
 
-.about-popup {
-  position: absolute;
-  top: 22px;
-  right: 4vw;
-  width: v-bind(aboutPopupFullWidth);
-  background: white;
-  box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-  opacity: 0;
-  border-radius: 2px;
-  z-index: 19;
-  padding: 4px 24px 16px 30px;
-  min-height: 56px;
-}
-
-.about-button-wrapper {
-  justify-self: end;
-}
-
 .close-button {
   pointer-events: auto;
-}
-
-body.screen--sm,
-body.screen--xs {
-  .about-popup {
-    width: v-bind(aboutPopupFullWidth);
-    top: 28px;
-    min-height: 44px;
-  }
-
-  .about-text-wrapper {
-    margin-top: 32px;
-  }
 }
 </style>

@@ -15,7 +15,7 @@ float createRainLayer(float speedFactor, float timeFactor, vec2 uv, float textur
     vec2 movingUv = uv * textureSize + speed;
     vec2 stretchedUv = vec2(movingUv.x * 2.0, movingUv.y * 0.03); 
     float rainTexture = texture(uTexture1, stretchedUv).r;
-    rainTexture = pow(rainTexture, 10.0);
+    rainTexture = pow(rainTexture, 8.0);
     return rainTexture;
 }
 

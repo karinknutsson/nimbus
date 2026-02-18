@@ -176,7 +176,7 @@ async function setMapStyle() {
   // const weatherMain = data.weather[0].main;
   // const weatherDescription = data.weather[0].description;
   const weatherDescription = "overcast clouds";
-  const weatherMain = "Rain";
+  const weatherMain = "Drizzle";
   // const weatherMain = "Snow";
 
   weatherStore.setWeatherType(weatherMain);

@@ -6,6 +6,8 @@ uniform float uTime;
 uniform vec2 uResolution;
 uniform float uWind;
 uniform vec2 uAtmosphereColor;
+uniform int uCloudFactor;
+uniform int uRainFactor;
 
 uniform sampler2D uCloudTexture;
 uniform sampler2D uAshTexture;

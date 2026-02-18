@@ -24,7 +24,10 @@ let map;
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 let currentLayerId = null;
 let displayedStyle = null;
-let atmosphereColor = { r: 0, g: 0, b: 0 };
+
+const atmosphereColor = { r: 0, g: 0, b: 0 };
+let cloudFactor = 0;
+let rainFactor = 0;
 
 const texturePaths = [
   { name: "uAshTexture", path: "./noise-textures/Perlin23-512x512.png" },
@@ -72,6 +75,8 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
       this.uWind = gl.getUniformLocation(this.program, "uWind");
       this.uAtmosphereColor = gl.getUniformLocation(this.program, "uAtmosphereColor");
+      this.uCloudFactor = gl.getUniformLocation(this.program, "uCloudFactor");
+      this.uRainFactor = gl.getUniformLocation(this.program, "uRainFactor");
 
       // Set texture uniforms and load textures
       texturePaths.forEach((texturePath) => {
@@ -124,6 +129,8 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
       gl.uniform1f(this.uWind, weatherStore.windSpeed);
       gl.uniform3f(this.uAtmosphereColor, atmosphereColor.r, atmosphereColor.g, atmosphereColor.b);
+      gl.uniform1f(this.uCloudFactor, cloudFactor);
+      gl.uniform1f(this.uRainFactor, rainFactor);
 
       this.textures.forEach((t, i) => {
         gl.activeTexture(gl.TEXTURE0 + t.unit);
@@ -192,15 +199,51 @@ async function setMapStyle() {
       if (weather.main === "Clear") {
         removeLayerIfExists(currentLayerId);
       } else {
+        if (weather.main === "Mist") {
+          atmosphereColor.r = 0.7;
+          atmosphereColor.g = 0.7;
+          atmosphereColor.b = 0.7;
+        } else if (weather.main === "Fog") {
+          atmosphereColor.r = 0.6;
+          atmosphereColor.g = 0.6;
+          atmosphereColor.b = 0.6;
+        } else if (weather.main === "Haze") {
+          atmosphereColor.r = 0.38;
+          atmosphereColor.g = 0.33;
+          atmosphereColor.b = 0.28;
+        } else if (weather.main === "Dust" || weather.main === "Sand") {
+          atmosphereColor.r = 0.66;
+          atmosphereColor.g = 0.6;
+          atmosphereColor.b = 0.55;
+        } else if (weather.main === "Smoke") {
+          atmosphereColor.r = 0.56;
+          atmosphereColor.g = 0.56;
+          atmosphereColor.b = 0.57;
+        } else if (weather.main === "Ash") {
+          atmosphereColor.r = 0.0902;
+          atmosphereColor.g = 0.1137;
+          atmosphereColor.b = 0.1294;
+        } else if (weather.main === "Clouds") {
+          if (weather.description.includes("overcast")) {
+            cloudFactor = 1;
+          } else if (weather.description.includes("broken")) {
+            cloudFactor = 0.75;
+          } else if (weather.description.includes("scattered")) {
+            cloudFactor = 0.5;
+          } else {
+            cloudFactor = 0.25;
+          }
+        } else if (weather.main === "Rain") {
+          rainFactor = 1;
+        } else if (weather.main === "Drizzle") {
+          rainFactor = 0.5;
+        }
+
         addShaderLayer("shaderLayer", vertexShader, fragmentShader);
       }
     });
-    // const weatherMain = data.weather[0].main;
-    // const weatherDescription = data.weather[0].description;
 
-    weatherMain = "Clouds";
-    const weatherDescription = "broken clouds";
-
+    // weatherMain = "Clouds";
     weatherStore.setWeatherType(weatherMain);
 
     // console.log(data);

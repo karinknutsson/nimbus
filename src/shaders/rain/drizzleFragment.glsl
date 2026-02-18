@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform vec2 uResolution;
 uniform float uTime;
+uniform float uWind;
 uniform sampler2D uTexture0;
 uniform sampler2D uTexture1;
 
@@ -12,7 +13,7 @@ out vec4 outColor;
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
-    vec2 speed = vec2(-0.005, 0.2);
+    vec2 speed = vec2(-0.002, 0.1);
     vec2 movingUv = uv + speed * uTime;
 
     // Cloud texture
@@ -30,13 +31,13 @@ void main() {
     float rain = texture(uTexture1, stretchedUv).r;
 
     // Increase contrast
-    rain = pow(rain, 3.0) * 1.5; 
+    rain = pow(rain, 2.0) * 1.5; 
 
     // Threshold to create sharper streaks
-    rain = smoothstep(0.3, 1.0, rain);
+    rain = smoothstep(0.5, 1.0, rain);
 
     // Less opacity
-    rain *= 0.5; 
+    rain *= 0.1; 
 
     // Opacity for center view
     float opacity = distance(uv, vec2(0.5)) * 1.5;

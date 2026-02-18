@@ -1,34 +1,17 @@
 @import "mapbox-gl/dist/mapbox-gl.css";
-@import url("https://fonts.googleapis.com/css2?family=Fugaz+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=block");
+@import url("https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=block");
 
 body {
   background-color: $body-bg;
   overflow: hidden;
-  font-family: "Open Sans", sans-serif;
-  color: $deep-blue;
+  font-family: "Sofia Sans", sans-serif;
+  color: $primary;
 }
 
 h2 {
   font-size: 20px;
-  font-weight: 600;
   line-height: 100%;
   margin: 0;
-}
-
-p {
-  font-weight: 500;
-}
-
-.logo {
-  font-family: "Fugaz One", cursive;
-  font-size: 56px;
-  color: $deep-blue;
-}
-
-.logo-mobile {
-  font-family: "Fugaz One", cursive;
-  font-size: 36px;
-  color: $deep-blue;
 }
 
 .flex-center {
@@ -43,7 +26,7 @@ p {
   border-radius: 50%;
   width: 36px;
   height: 36px;
-  color: $deep-blue;
+  color: $primary;
   padding: 0;
   transform: translateX(8px);
 
@@ -72,7 +55,6 @@ body.screen--xs {
 }
 
 label {
-  font-weight: 800;
   font-size: 16px;
   text-transform: uppercase;
 }
@@ -91,18 +73,7 @@ input:focus {
 
 input::placeholder {
   opacity: 0.5;
-  color: $deep-blue;
-}
-
-button.submit {
-  background: $deep-blue;
-  border: 0;
-  color: white;
-  text-transform: uppercase;
-  padding: 8px;
-  font-size: 18px;
-  font-weight: 800;
-  // margin-top: 8px;
+  color: $primary;
 }
 
 button.submit:focus {
@@ -122,7 +93,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
-  -webkit-text-fill-color: #060606 !important;
+  -webkit-text-fill-color: $primary !important;
 }
 
 .error-message {

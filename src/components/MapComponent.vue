@@ -1,6 +1,4 @@
 <template>
-  <div class="overlay" v-if="showOverlay" :style="overlayStyle"></div>
-
   <div id="map" class="map-container"></div>
 </template>
 
@@ -12,22 +10,22 @@ import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
 
-import vertexShader from "src/shaders/vertexShader.glsl?raw";
+import vertexShader from "src/shaders/vertex.glsl?raw";
 
-import fogFragmentShader from "src/shaders/atmosphere/fogFragmentShader.glsl?raw";
-import mistFragmentShader from "src/shaders/atmosphere/mistFragmentShader.glsl?raw";
-import hazeFragmentShader from "src/shaders/atmosphere/hazeFragmentShader.glsl?raw";
-import dustFragmentShader from "src/shaders/atmosphere/dustFragmentShader.glsl?raw";
-import ashFragmentShader from "src/shaders/atmosphere/ashFragmentShader.glsl?raw";
-import smokeFragmentShader from "src/shaders/atmosphere/smokeFragmentShader.glsl?raw";
+import fogFragmentShader from "src/shaders/atmosphere/fogFragment.glsl?raw";
+import mistFragmentShader from "src/shaders/atmosphere/mistFragment.glsl?raw";
+import hazeFragmentShader from "src/shaders/atmosphere/hazeFragment.glsl?raw";
+import dustFragmentShader from "src/shaders/atmosphere/dustFragment.glsl?raw";
+import ashFragmentShader from "src/shaders/atmosphere/ashFragment.glsl?raw";
+import smokeFragmentShader from "src/shaders/atmosphere/smokeFragment.glsl?raw";
 
-import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragmentShader.glsl?raw";
-import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragmentShader.glsl?raw";
-import scatteredCloudsFragmentShader from "src/shaders/clouds/scatteredCloudsFragmentShader.glsl?raw";
-import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragmentShader.glsl?raw";
+import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragment.glsl?raw";
+import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragment.glsl?raw";
+import scatteredCloudsFragmentShader from "src/shaders/clouds/scatteredCloudsFragment.glsl?raw";
+import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragment.glsl?raw";
 
-import rainFragmentShader from "src/shaders/rain/rainFragmentShader.glsl?raw";
-import drizzleFragmentShader from "src/shaders/rain/drizzleFragmentShader.glsl?raw";
+import rainFragmentShader from "src/shaders/rain/rainFragment.glsl?raw";
+import drizzleFragmentShader from "src/shaders/rain/drizzleFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
@@ -43,22 +41,13 @@ let displayedStyle = null;
 let texturePaths = [];
 const x = ref(0);
 const y = ref(0);
-const showOverlay = ref(false);
-
-const overlayStyle = computed(() => {
-  const radius = Math.max(window.innerWidth, window.innerHeight) * 0.5;
-  return {
-    maskImage: `radial-gradient(circle ${radius}px at ${x.value}px ${y.value}px, transparent 0%, transparent 30%, black 100%)`,
-    WebkitMaskImage: `radial-gradient(circle ${radius}px at ${x.value}px ${y.value}px, transparent 0%, transparent 30%, black 100%)`,
-  };
-});
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z",
   winter: "mapbox://styles/karinmiriam/cml9alr3f002501qzdrwabuer",
   autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
   spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
-  summer: "mapbox://styles/karinmiriam/cml9hill2001801r02ghifgjr",
+  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
   tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3",
   desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg",
 };
@@ -87,15 +76,15 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 
       // Set attributes and uniforms
       this.aPos = gl.getAttribLocation(this.program, "a_pos");
-      this.uIntensity = gl.getUniformLocation(this.program, "uIntensity");
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
+      this.uTime = gl.getUniformLocation(this.program, "uTime");
+      this.uWind = gl.getUniformLocation(this.program, "uWind");
 
       // Set texture uniforms if needed
       if (texturePaths.length) {
         for (let i = 0; i < texturePaths.length; i++) {
           this.textureUniforms.push(gl.getUniformLocation(this.program, `uTexture${i}`));
         }
-        this.uTime = gl.getUniformLocation(this.program, "uTime");
       }
 
       this.buffer = createFullscreenQuad(gl);
@@ -147,6 +136,8 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 
       const time = (performance.now() - startTime) * 0.001;
       gl.uniform1f(this.uTime, time);
+      gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
+      gl.uniform1f(this.uWind, weatherStore.windSpeed);
 
       this.textures.forEach((t, i) => {
         gl.activeTexture(gl.TEXTURE0 + t.unit);
@@ -157,9 +148,6 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.enableVertexAttribArray(this.aPos);
       gl.vertexAttribPointer(this.aPos, 2, gl.FLOAT, false, 0, 0);
-
-      gl.uniform1f(this.uIntensity, 0.6);
-      gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
 
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -186,7 +174,17 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 async function setMapStyle() {
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
 
-  console.log(data.weather[0]);
+  if (!data) return;
+
+  const weatherMain = data.weather[0].main;
+  const weatherDescription = data.weather[0].description;
+
+  weatherStore.setWeatherType(weatherMain);
+  weatherStore.setAirTemp(Math.round(data.main.temp));
+  weatherStore.setFeelsLike(Math.round(data.main.feels_like));
+  weatherStore.setLocation(data.name);
+  weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
+  console.log(data);
 
   let currentStyle;
 
@@ -197,6 +195,7 @@ async function setMapStyle() {
   } else if (data.main.temp > 10 && data.main.temp <= 20) {
     currentStyle = "spring";
   } else if (data.main.temp > 20 && data.main.temp <= 30) {
+    console.log("summer");
     currentStyle = "summer";
   } else if (data.main.temp > 30 && data.main.temp <= 40) {
     currentStyle = "tropical";
@@ -204,11 +203,11 @@ async function setMapStyle() {
     currentStyle = "desert";
   }
 
-  const testWeather = "Rain";
+  // const weatherMain = "Clouds";
+  // const weatherDescription = "broken clouds";
 
   function setShader() {
-    switch (data.weather[0].main) {
-      // switch (testWeather) {
+    switch (weatherMain) {
       // Atmospheric conditions
       case "Fog":
         texturePaths = [];
@@ -238,17 +237,14 @@ async function setMapStyle() {
 
       // Clouds
       case "Clouds":
-        if (data.weather[0].description.includes("overcast")) {
-          texturePaths = ["./noise-textures/Milky6-512x512.png"];
+        texturePaths = ["./noise-textures/Milky6-512x512.png"];
+        if (weatherDescription.includes("overcast")) {
           addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
-        } else if (data.weather[0].description.includes("broken")) {
-          texturePaths = ["./noise-textures/Milky7-512x512.png"];
+        } else if (weatherDescription.includes("broken")) {
           addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
-        } else if (data.weather[0].description.includes("scattered")) {
-          texturePaths = ["./noise-textures/Milky6-512x512.png"];
+        } else if (weatherDescription.includes("scattered")) {
           addShaderLayer("scatteredCloudsLayer", vertexShader, scatteredCloudsFragmentShader);
         } else {
-          texturePaths = ["./noise-textures/Milky6-512x512.png"];
           addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
         }
         break;

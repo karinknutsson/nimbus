@@ -12,7 +12,7 @@
           id="searchTerm"
           v-model="searchTerm"
           type="text"
-          :placeholder="$q.screen.gt.xs ? 'Search' : ''"
+          placeholder="Search"
           @focus="onOpenSearch"
           @blur="onBlurSearch"
         />
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, nextTick, onMounted } from "vue";
+import { computed, ref, watch, nextTick } from "vue";
 import { useSearchStore } from "src/stores/search-store";
 import { areCoordinates } from "src/utils/is-coordinate";
 import { useQuasar } from "quasar";
@@ -59,25 +59,11 @@ const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
 
-const searchBarBackground = computed(() => {
-  return isSearchFocused.value ? "#ffffff" : "rgba(255, 255, 255, 0.7)";
-});
-
 const searchBarFullWidth = computed(() => {
   if ($q.screen.lt.md) {
-    return "92vw";
-  } else if ($q.screen.md) {
-    return "340px";
+    return "100%";
   } else {
     return "420px";
-  }
-});
-
-onMounted(() => {
-  if ($q.screen.gt.sm) {
-    gsap.set(".search-input", {
-      padding: "6px 8px",
-    });
   }
 });
 
@@ -98,18 +84,10 @@ async function onOpenSearch() {
   searchStore.isSearchOpen = true;
   isSearchFocused.value = true;
 
-  const delay = $q.screen.lt.md ? 0.2 : 0;
-
   gsap.to(".search-bar", {
     duration: 0.3,
     width: searchBarFullWidth.value,
     ease: "power2.out",
-    delay,
-  });
-
-  gsap.to(".search-input", {
-    padding: "6px 8px",
-    duration: 0.1,
     delay: 0.2,
   });
 
@@ -127,7 +105,7 @@ function onBlurSearch() {
 
   if (!searchTerm.value) {
     searchStore.isSearchOpen = false;
-    const width = $q.screen.lt.md ? "44px" : "136px";
+    const width = $q.screen.lt.md ? "100%" : "136px";
 
     gsap.to(".search-bar", {
       duration: 0.3,
@@ -163,26 +141,16 @@ watch(searchTerm, async (value) => {
     await searchStore.fetchSuggestions(value);
 
     if (searchStore.suggestions.length) {
-      gsap.set(".search-suggestions", {
-        width: searchBarFullWidth.value,
-      });
+      if ($q.screen.gt.md) {
+        gsap.set(".search-suggestions", {
+          width: searchBarFullWidth.value,
+        });
+      }
     }
   }
 });
 
 watch(searchBarFullWidth, () => {
-  if ($q.screen.lt.md) {
-    gsap.to(".search-input", {
-      padding: "0",
-      duration: 0.1,
-    });
-  } else {
-    gsap.to(".search-input", {
-      padding: "6px 8px",
-      duration: 0.1,
-    });
-  }
-
   if (searchStore.isSearchOpen) {
     gsap.to(".search-bar", {
       duration: 0.3,
@@ -200,7 +168,7 @@ watch(searchBarFullWidth, () => {
       });
     }
   } else {
-    const width = $q.screen.lt.md ? "44px" : "136px";
+    const width = $q.screen.lt.md ? "100%" : "136px";
     gsap.to(".search-bar", {
       duration: 0.3,
       width,
@@ -240,14 +208,13 @@ li {
 }
 
 .suggestion-list-button:hover {
-  background: #ffffff;
+  background: $secondary;
 }
 
 .search-bar {
   pointer-events: auto;
-  background: v-bind(searchBarBackground);
-  box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-  border-radius: 2px;
+  background: $secondary;
+  border-radius: 8px;
   width: 136px;
   height: 56px;
   padding: 0 8px;
@@ -266,23 +233,23 @@ li {
   z-index: 5002;
   top: 96px;
   left: 4vw;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-  border-radius: 2px;
+  background: $secondary;
+  border-radius: 8px;
+  width: v-bind(searchBarFullWidth);
 }
 
 .search-input {
   background: transparent;
-  color: $deep-blue;
+  color: #0d0d0d;
   border: 0;
-  padding: 0;
+  padding: 6px 8px;
   font-size: 16px;
   font-weight: 600;
   width: 100%;
 }
 
 .search-icon {
-  color: $deep-blue;
+  color: $primary;
   border: 0;
   padding: 8px;
   background: transparent;
@@ -293,7 +260,7 @@ li {
   background: transparent;
   border: 0;
   border-radius: 50%;
-  color: $deep-blue;
+  color: $primary;
   padding: 8px;
   margin-left: 8px;
 }
@@ -314,13 +281,13 @@ i {
 body.screen--sm,
 body.screen--xs {
   .search-bar {
-    width: 44px;
-    height: 44px;
-    padding: 0 5px;
+    width: 100%;
   }
 
-  i {
-    font-size: 18px;
+  .search-suggestions {
+    top: unset;
+    bottom: calc(16vw + 64px);
+    width: 92vw;
   }
 }
 </style>

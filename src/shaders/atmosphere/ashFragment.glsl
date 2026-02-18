@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform vec2 uResolution;
 uniform float uTime;
+uniform float uWind;
 uniform sampler2D uTexture0;
 
 out vec4 outColor;
@@ -23,20 +24,19 @@ vec2 rotateUv(vec2 uv, float angle, vec2 center) {
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
-    vec2 speed = vec2(0.002, 0.001);
+    vec2 speed = vec2(0.02, 0.01);
     vec2 movingUv = uv + speed * uTime;
 
-    movingUv = rotateUv(movingUv, uTime * 0.003, vec2(0.5));
-    movingUv = fract(movingUv);
+    movingUv = rotateUv(movingUv, uTime * 0.03, vec2(0.5));
 
-    float cloud = texture(uTexture0, movingUv).r;
+    float ash = texture(uTexture0, movingUv).r;
+    ash = smoothstep(0.2, 1.0, ash);
 
-    // Invert cloud texture
-    float invertedCloud = 1.0 - cloud;
-    invertedCloud = pow(invertedCloud, 2.0) * 1.5;
+    float opacity = distance(uv, vec2(0.5));
+    opacity = smoothstep(0.0, 0.5, opacity);
+    ash *= opacity;
 
+    vec3 color = vec3(0.0902, 0.1137, 0.1294);
 
-    vec3 color = vec3(1.0, 1.0, 1.0);
-
-    outColor = vec4(color, invertedCloud);
+    outColor = vec4(color, ash);
 }

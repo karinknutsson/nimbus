@@ -6,7 +6,6 @@ uniform vec2 uResolution;
 uniform float uTime;
 uniform float uWind;
 uniform sampler2D uTexture0;
-uniform sampler2D uTexture1;
 
 out vec4 outColor;
 
@@ -26,7 +25,7 @@ void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
     // Set snow speed and create uv
-    vec2 speedFirstLayer = vec2(sin(uTime * 3.0) * 0.008, uTime * 0.1);
+    vec2 speedFirstLayer = vec2(sin(uTime * 3.0) * 0.008 - uTime * 0.02, uTime * 0.1);
     vec2 speedSecondLayer = vec2(- uTime * 0.1, uTime * 0.2);
     vec2 speedThirdLayer = vec2(sin(uTime * 3.0) * 0.008, uTime * 0.05);
 
@@ -36,9 +35,9 @@ void main() {
     vec2 movingUvThirdLayer = rotateUv(uv * 2.0, 3.14159265, vec2(0.5)) - speedThirdLayer;
 
     // Snow texture
-    float snowFirstLayer = texture(uTexture1, movingUvFirstLayer).r;
-    float snowSecondLayer = texture(uTexture1, movingUvSecondLayer).r;
-    float snowThirdLayer = texture(uTexture1, movingUvThirdLayer).r;
+    float snowFirstLayer = texture(uTexture0, movingUvFirstLayer).r;
+    float snowSecondLayer = texture(uTexture0, movingUvSecondLayer).r;
+    float snowThirdLayer = texture(uTexture0, movingUvThirdLayer).r;
 
     // Increase contrast
     snowFirstLayer = pow(snowFirstLayer, 6.0); 
@@ -47,5 +46,5 @@ void main() {
 
     // Set color
     vec3 color = vec3(1.0, 1.0, 1.0);
-    outColor = vec4(color,  snowFirstLayer + snowSecondLayer + snowThirdLayer);
+    outColor = vec4(color, snowFirstLayer + snowSecondLayer + snowThirdLayer);
 }

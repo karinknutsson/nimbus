@@ -43,7 +43,7 @@ let texturePaths = [];
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z",
-  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh",
+  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh?fresh=true",
   autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
   spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
   summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
@@ -260,10 +260,7 @@ async function setMapStyle() {
         addShaderLayer("drizzleLayer", vertexShader, drizzleFragmentShader);
         break;
       case "Snow":
-        texturePaths = [
-          "./noise-textures/Milky6-512x512.png",
-          "./noise-textures/Perlin24-512x512.png",
-        ];
+        texturePaths = ["./noise-textures/Perlin24-512x512.png"];
         addShaderLayer("snowLayer", vertexShader, snowFragmentShader);
         break;
 

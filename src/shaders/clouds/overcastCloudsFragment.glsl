@@ -45,7 +45,7 @@ void main() {
     float opacity = pow(distance(uv, vec2(0.5)), 1.8)  * 2.6;
     opacity = smoothstep(0.0, 0.5, opacity);
 
+    // Set color
     vec3 color = vec3(1.0, 1.0, 1.0);
-
     outColor = vec4(color * vCloud, opacity);
 }

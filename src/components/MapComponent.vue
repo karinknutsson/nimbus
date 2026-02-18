@@ -185,7 +185,6 @@ async function setMapStyle() {
   weatherStore.setFeelsLike(Math.round(data.main.feels_like));
   weatherStore.setLocation(data.name);
   weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
-  console.log(weatherStore.windSpeed);
 
   let currentStyle;
 
@@ -196,7 +195,6 @@ async function setMapStyle() {
   } else if (data.main.temp > 10 && data.main.temp <= 20) {
     currentStyle = "spring";
   } else if (data.main.temp > 20 && data.main.temp <= 30) {
-    console.log("summer");
     currentStyle = "summer";
   } else if (data.main.temp > 30 && data.main.temp <= 40) {
     currentStyle = "tropical";

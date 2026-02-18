@@ -24,20 +24,27 @@ vec2 rotateUv(vec2 uv, float angle, vec2 center) {
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
-    vec2 speed = vec2(0.02, 0.01);
-    vec2 movingUv = uv + speed * uTime;
+    // Set speed and rotation based on time and wind
+    vec2 speed = vec2(0.002, 0.001);
+    speed *= uWind * 0.5;
+    float rotation = uTime * 0.003;
+    rotation *= uWind * 0.5;
 
-    movingUv = rotateUv(movingUv, uTime * 0.03, vec2(0.5));
+    // Create uv
+    vec2 movingUv = uv + speed * uTime;
+    movingUv = rotateUv(movingUv, rotation, vec2(0.5));
     movingUv = fract(movingUv);
 
+    // Smoke texture
     float smoke = texture(uTexture0, movingUv).r;
     smoke = smoothstep(0.2, 1.0, smoke);
 
+    // Opacity for center view
     float opacity = distance(uv, vec2(0.5));
     opacity = smoothstep(0.0, 0.5, opacity);
     smoke *= opacity;
 
+    // Set color
     vec3 color = vec3(0.56, 0.56, 0.57);
-
     outColor = vec4(color, smoke);
 }

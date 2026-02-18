@@ -26,6 +26,7 @@ let currentLayerId = null;
 let displayedStyle = null;
 
 const atmosphereColor = { r: 0, g: 0, b: 0 };
+let mistFactor = 0;
 let cloudFactor = 0;
 let rainFactor = 0;
 
@@ -75,6 +76,7 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
       this.uWind = gl.getUniformLocation(this.program, "uWind");
       this.uAtmosphereColor = gl.getUniformLocation(this.program, "uAtmosphereColor");
+      this.uMistFactor = gl.getUniformLocation(this.program, "uMistFactor");
       this.uCloudFactor = gl.getUniformLocation(this.program, "uCloudFactor");
       this.uRainFactor = gl.getUniformLocation(this.program, "uRainFactor");
 
@@ -129,6 +131,7 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
       gl.uniform1f(this.uWind, weatherStore.windSpeed);
       gl.uniform3f(this.uAtmosphereColor, atmosphereColor.r, atmosphereColor.g, atmosphereColor.b);
+      gl.uniform1f(this.uMistFactor, mistFactor);
       gl.uniform1f(this.uCloudFactor, cloudFactor);
       gl.uniform1f(this.uRainFactor, rainFactor);
 
@@ -192,29 +195,38 @@ async function setMapStyle() {
     weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
 
     let weatherMain = "";
-
+    // console.log(data.weather);
     data.weather.forEach((weather, index) => {
       if (index === 0) weatherMain = weather.main;
 
       if (weather.main === "Clear") {
-        removeLayerIfExists(currentLayerId);
+        addShaderLayer("shaderLayer", vertexShader, fragmentShader);
+
+        // mistFactor = 0;
+        // cloudFactor = 0;
+        // rainFactor = 0;
+        // removeLayerIfExists(currentLayerId);
       } else {
         if (weather.main === "Mist") {
           atmosphereColor.r = 0.7;
           atmosphereColor.g = 0.7;
           atmosphereColor.b = 0.7;
+          mistFactor = 1;
         } else if (weather.main === "Fog") {
           atmosphereColor.r = 0.6;
           atmosphereColor.g = 0.6;
           atmosphereColor.b = 0.6;
+          mistFactor = 1;
         } else if (weather.main === "Haze") {
           atmosphereColor.r = 0.38;
           atmosphereColor.g = 0.33;
           atmosphereColor.b = 0.28;
+          mistFactor = 1;
         } else if (weather.main === "Dust" || weather.main === "Sand") {
           atmosphereColor.r = 0.66;
           atmosphereColor.g = 0.6;
           atmosphereColor.b = 0.55;
+          mistFactor = 1;
         } else if (weather.main === "Smoke") {
           atmosphereColor.r = 0.56;
           atmosphereColor.g = 0.56;

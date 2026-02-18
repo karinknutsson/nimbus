@@ -5,9 +5,11 @@ precision mediump float;
 uniform float uTime;
 uniform vec2 uResolution;
 uniform float uWind;
+
 uniform vec2 uAtmosphereColor;
-uniform int uCloudFactor;
-uniform int uRainFactor;
+uniform float uCloudFactor;
+uniform float uMistFactor;
+uniform float uRainFactor;
 
 uniform sampler2D uCloudTexture;
 uniform sampler2D uAshTexture;
@@ -37,11 +39,21 @@ void main() {
     movingUv = rotateUv(movingUv, uTime * 0.003, vec2(0.5));
 
     // Cloud texture
-    float cloud = texture(uCloudTexture, movingUv).r;
+    float clouds = texture(uCloudTexture, movingUv).r;
 
-    // V curve cloud texture
-    float vCloud = abs((cloud - 0.5) * 2.0);
-    vCloud = mix(1.0, vCloud, 0.1);
+    // Inverted cloud texture: scattered and few clouds
+    float invertedClouds = 1.0 - clouds;
+    float fewClouds = smoothstep(0.3, 1.0, invertedClouds);
+
+    // Pow inverted cloud: few clouds
+    float scatteredClouds = pow(fewClouds, 2.0) * 1.5;
+
+    // V curve cloud texture: overcast and broken clouds
+    float vCurveClouds = abs((clouds - 0.5) * 2.0);
+    float overcastClouds = mix(1.0, vCurveClouds, 0.1);
+
+    float brokenClouds = mix(1.0, vCurveClouds, 0.4);
+
 
     // Opacity for center view
     float opacity = pow(distance(uv, vec2(0.5)), 1.2)  * 1.6;
@@ -49,6 +61,6 @@ void main() {
 
     vec3 color = vec3(1.0, 1.0, 1.0);
 
-    outColor = vec4(color * vCloud, opacity);
+    outColor = vec4(color * overcastClouds, opacity);
     
 }

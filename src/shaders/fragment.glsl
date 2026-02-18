@@ -5,7 +5,8 @@ precision mediump float;
 uniform float uTime;
 uniform vec2 uResolution;
 uniform float uWind;
-uniform vec2 uColor;
+uniform vec2 uAtmosphereColor;
+
 uniform sampler2D uCloudTexture;
 uniform sampler2D uAshTexture;
 uniform sampler2D uSmokeTexture;
@@ -34,7 +35,7 @@ void main() {
     movingUv = rotateUv(movingUv, uTime * 0.003, vec2(0.5));
 
     // Cloud texture
-    float cloud = texture(uTexture0, movingUv).r;
+    float cloud = texture(uCloudTexture, movingUv).r;
 
     // V curve cloud texture
     float vCloud = abs((cloud - 0.5) * 2.0);

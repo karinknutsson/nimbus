@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
@@ -12,21 +12,6 @@ import { useWeatherStore } from "src/stores/weather-store";
 
 import vertexShader from "src/shaders/vertex.glsl?raw";
 import fragmentShader from "src/shaders/fragment.glsl?raw";
-
-import fogFragmentShader from "src/shaders/atmosphere/fogFragment.glsl?raw";
-import mistFragmentShader from "src/shaders/atmosphere/mistFragment.glsl?raw";
-import hazeFragmentShader from "src/shaders/atmosphere/hazeFragment.glsl?raw";
-import dustFragmentShader from "src/shaders/atmosphere/dustFragment.glsl?raw";
-import ashFragmentShader from "src/shaders/atmosphere/ashFragment.glsl?raw";
-import smokeFragmentShader from "src/shaders/atmosphere/smokeFragment.glsl?raw";
-
-import overcastCloudsFragmentShader from "src/shaders/clouds/overcastCloudsFragment.glsl?raw";
-import brokenCloudsFragmentShader from "src/shaders/clouds/brokenCloudsFragment.glsl?raw";
-import scatteredCloudsFragmentShader from "src/shaders/clouds/scatteredCloudsFragment.glsl?raw";
-import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragment.glsl?raw";
-
-import rainFragmentShader from "src/shaders/rain/rainFragment.glsl?raw";
-import drizzleFragmentShader from "src/shaders/rain/drizzleFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
@@ -39,14 +24,14 @@ let map;
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 let currentLayerId = null;
 let displayedStyle = null;
+let atmosphereColor = { r: 0, g: 0, b: 0 };
+
 const texturePaths = [
   { name: "uAshTexture", path: "./noise-textures/Perlin23-512x512.png" },
   { name: "uCloudTexture", path: "./noise-textures/Milky6-512x512.png" },
   { name: "uSmokeTexture", path: "./noise-textures/SuperPerlin2-512x512.png" },
   { name: "uRainTexture", path: "./noise-textures/Perlin24-512x512.png" },
 ];
-const x = ref(0);
-const y = ref(0);
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z",
@@ -82,9 +67,11 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 
       // Set attributes and uniforms
       this.aPos = gl.getAttribLocation(this.program, "a_pos");
-      this.uResolution = gl.getUniformLocation(this.program, "uResolution");
+
       this.uTime = gl.getUniformLocation(this.program, "uTime");
+      this.uResolution = gl.getUniformLocation(this.program, "uResolution");
       this.uWind = gl.getUniformLocation(this.program, "uWind");
+      this.uAtmosphereColor = gl.getUniformLocation(this.program, "uAtmosphereColor");
 
       // Set texture uniforms and load textures
       texturePaths.forEach((texturePath) => {
@@ -136,6 +123,7 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       gl.uniform1f(this.uTime, time);
       gl.uniform2f(this.uResolution, gl.canvas.width, gl.canvas.height);
       gl.uniform1f(this.uWind, weatherStore.windSpeed);
+      gl.uniform3f(this.uAtmosphereColor, atmosphereColor.r, atmosphereColor.g, atmosphereColor.b);
 
       this.textures.forEach((t, i) => {
         gl.activeTexture(gl.TEXTURE0 + t.unit);
@@ -191,6 +179,11 @@ async function setMapStyle() {
   }
 
   function setShader() {
+    weatherStore.setAirTemp(Math.round(data.main.temp));
+    weatherStore.setFeelsLike(Math.round(data.main.feels_like));
+    weatherStore.setLocation(data.name);
+    weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
+
     let weatherMain = "";
 
     data.weather.forEach((weather, index) => {
@@ -209,10 +202,7 @@ async function setMapStyle() {
     const weatherDescription = "broken clouds";
 
     weatherStore.setWeatherType(weatherMain);
-    weatherStore.setAirTemp(Math.round(data.main.temp));
-    weatherStore.setFeelsLike(Math.round(data.main.feels_like));
-    weatherStore.setLocation(data.name);
-    weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
+
     // console.log(data);
   }
 

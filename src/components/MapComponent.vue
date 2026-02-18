@@ -47,7 +47,7 @@ const mapStyles = {
   winter: "mapbox://styles/karinmiriam/cml9alr3f002501qzdrwabuer",
   autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
   spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
-  summer: "mapbox://styles/karinmiriam/cml9hill2001801r02ghifgjr",
+  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
   tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3",
   desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg",
 };

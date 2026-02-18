@@ -127,7 +127,7 @@ const $q = useQuasar();
   align-items: flex-start;
   justify-content: flex-start;
   gap: 64px;
-  background: #ffde90;
+  background: $ui-background;
   border-radius: 8px;
   pointer-events: auto;
   padding: 16px;

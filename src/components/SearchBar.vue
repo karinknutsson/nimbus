@@ -224,12 +224,12 @@ li {
 }
 
 .suggestion-list-button:hover {
-  background: #ffde90;
+  background: $ui-background;
 }
 
 .search-bar {
   pointer-events: auto;
-  background: #ffde90;
+  background: $ui-background;
   border-radius: 8px;
   width: 136px;
   height: 56px;
@@ -249,7 +249,7 @@ li {
   z-index: 5002;
   top: 96px;
   left: 4vw;
-  background: #ffde90;
+  background: $ui-background;
   border-radius: 8px;
   width: v-bind(searchBarFullWidth);
 }
@@ -305,14 +305,5 @@ body.screen--xs {
     bottom: calc(16vw + 64px);
     width: 92vw;
   }
-  // .search-bar {
-  //   width: 44px;
-  //   height: 44px;
-  //   padding: 0 5px;
-  // }
-
-  // i {
-  //   font-size: 18px;
-  // }
 }
 </style>

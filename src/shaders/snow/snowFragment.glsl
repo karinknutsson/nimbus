@@ -31,8 +31,8 @@ void main() {
     vec2 speedThirdLayer = vec2(sin(uTime * 3.0) * 0.008, uTime * 0.05);
 
     // Create moving uvs
-    vec2 movingUvFirstLayer = uv * 1.2 + speedFirstLayer;
-    vec2 movingUvSecondLayer = uv * 1.5 + speedSecondLayer;
+    vec2 movingUvFirstLayer = uv * 1.5 + speedFirstLayer;
+    vec2 movingUvSecondLayer = uv * 1.8 + speedSecondLayer;
     vec2 movingUvThirdLayer = rotateUv(uv * 2.0, 3.14159265, vec2(0.5)) - speedThirdLayer;
 
     // Snow texture
@@ -45,19 +45,7 @@ void main() {
     snowSecondLayer = pow(snowSecondLayer, 6.0); 
     snowThirdLayer = pow(snowThirdLayer, 6.0); 
 
-    // Cloud texture
-    float cloud = texture(uTexture0, uv).r;
-
-    // V curve cloud texture
-    float vCloud = abs((cloud - 0.5) * 2.0);
-    vCloud = mix(1.0, vCloud, 0.1);
-
-    // Opacity for center view
-    float opacity = distance(uv, vec2(0.5));
-    opacity = smoothstep(0.0, 0.7, opacity);
-    float combinedOpacity = clamp(opacity + snowFirstLayer + snowSecondLayer + snowThirdLayer, 0.0, 1.0);
-
     // Set color
     vec3 color = vec3(1.0, 1.0, 1.0);
-    outColor = vec4(color * vCloud, combinedOpacity);
+    outColor = vec4(color,  snowFirstLayer + snowSecondLayer + snowThirdLayer);
 }

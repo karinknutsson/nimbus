@@ -43,7 +43,7 @@ let texturePaths = [];
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z",
-  winter: "mapbox://styles/karinmiriam/cml9alr3f002501qzdrwabuer",
+  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh",
   autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
   spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
   summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",

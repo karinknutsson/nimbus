@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, nextTick, onMounted } from "vue";
+import { computed, ref, watch, nextTick } from "vue";
 import { useSearchStore } from "src/stores/search-store";
 import { areCoordinates } from "src/utils/is-coordinate";
 import { useQuasar } from "quasar";
@@ -58,10 +58,6 @@ const searchTerm = ref("");
 const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
-
-const searchBarBackground = computed(() => {
-  return isSearchFocused.value ? "#ffffff" : "rgba(255, 255, 255, 0.7)";
-});
 
 const searchBarFullWidth = computed(() => {
   if ($q.screen.lt.md) {
@@ -155,18 +151,6 @@ watch(searchTerm, async (value) => {
 });
 
 watch(searchBarFullWidth, () => {
-  // if ($q.screen.lt.md) {
-  //   gsap.to(".search-input", {
-  //     padding: "0",
-  //     duration: 0.1,
-  //   });
-  // } else {
-  // gsap.to(".search-input", {
-  //   padding: "6px 8px",
-  //   duration: 0.1,
-  // });
-  // }
-
   if (searchStore.isSearchOpen) {
     gsap.to(".search-bar", {
       duration: 0.3,
@@ -224,12 +208,12 @@ li {
 }
 
 .suggestion-list-button:hover {
-  background: $ui-background;
+  background: $secondary;
 }
 
 .search-bar {
   pointer-events: auto;
-  background: $ui-background;
+  background: $secondary;
   border-radius: 8px;
   width: 136px;
   height: 56px;
@@ -249,7 +233,7 @@ li {
   z-index: 5002;
   top: 96px;
   left: 4vw;
-  background: $ui-background;
+  background: $secondary;
   border-radius: 8px;
   width: v-bind(searchBarFullWidth);
 }
@@ -265,7 +249,7 @@ li {
 }
 
 .search-icon {
-  color: $plum;
+  color: $primary;
   border: 0;
   padding: 8px;
   background: transparent;
@@ -276,7 +260,7 @@ li {
   background: transparent;
   border: 0;
   border-radius: 50%;
-  color: $plum;
+  color: $primary;
   padding: 8px;
   margin-left: 8px;
 }

@@ -47,7 +47,7 @@ const mapStyles = {
   winter: "mapbox://styles/karinmiriam/cml9alr3f002501qzdrwabuer",
   autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
   spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
-  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di"
+  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
   tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3",
   desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg",
 };
@@ -195,6 +195,7 @@ async function setMapStyle() {
   } else if (data.main.temp > 10 && data.main.temp <= 20) {
     currentStyle = "spring";
   } else if (data.main.temp > 20 && data.main.temp <= 30) {
+    console.log("summer");
     currentStyle = "summer";
   } else if (data.main.temp > 30 && data.main.temp <= 40) {
     currentStyle = "tropical";

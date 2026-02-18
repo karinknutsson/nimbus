@@ -9,7 +9,7 @@ body {
   overflow: hidden;
   font-family: "Sofia Sans", sans-serif;
   // color: #0d0d0d;
-  color: $plum;
+  color: $primary;
 }
 
 h2 {
@@ -34,7 +34,7 @@ h2 {
   border-radius: 50%;
   width: 36px;
   height: 36px;
-  color: $plum;
+  color: $primary;
   padding: 0;
   transform: translateX(8px);
 
@@ -82,7 +82,7 @@ input:focus {
 
 input::placeholder {
   opacity: 0.5;
-  color: $plum;
+  color: $primary;
 }
 
 button.submit:focus {
@@ -102,7 +102,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
-  -webkit-text-fill-color: $plum !important;
+  -webkit-text-fill-color: $primary !important;
 }
 
 .error-message {

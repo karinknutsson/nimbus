@@ -2,7 +2,6 @@
   <div class="nav-container">
     <div class="temp-container">
       <div class="weather-description-wrapper-wrapper">
-        <!-- <div class="feels-like-wrapper">{{ weatherStore.feelsLikeDescription }}</div> -->
         <div class="weather-description-wrapper">{{ weatherStore.weatherType }}</div>
         <div class="weather-description-wrapper">
           {{ "Air temp " + weatherStore.airTemp + "°" }}
@@ -22,90 +21,13 @@
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
 import SearchBar from "./SearchBar.vue";
-import gsap from "gsap";
-import { useSearchStore } from "src/stores/search-store";
-import { watch } from "vue";
 import { useWeatherStore } from "../stores/weather-store";
 
 const weatherStore = useWeatherStore();
-const searchStore = useSearchStore();
-const $q = useQuasar();
-
-// function handleOpenSearch() {
-//   gsap.to(".nav-btn", {
-//     duration: 0.2,
-//     opacity: 0,
-//     ease: "power2.out",
-//   });
-// }
-
-// function handleCloseSearch() {
-//   gsap.to(".nav-btn", {
-//     duration: 0.2,
-//     opacity: 1,
-//     ease: "power2.out",
-//     delay: 0.3,
-//   });
-// }
-
-// watch(
-//   () => $q.screen.gt.sm,
-//   (isDesktop) => {
-//     if (isDesktop) {
-//       handleCloseSearch();
-//     } else if (searchStore.isSearchOpen) {
-//       handleOpenSearch();
-//     }
-//   },
-// );
-
-// watch(
-//   () => searchStore.isSearchOpen,
-//   (isOpen) => {
-//     if ($q.screen.gt.sm) return;
-
-//     if (isOpen) {
-//       handleOpenSearch();
-//     } else {
-//       handleCloseSearch();
-//     }
-//   },
-// );
 </script>
 
 <style scoped lang="scss">
-// button.nav-btn {
-//   border: 0;
-//   color: $deep-blue;
-//   background: rgba(255, 255, 255, 0.7);
-//   // box-shadow: 0 2px 24px 0 rgba(83, 15, 148, 0.3);
-//   border-radius: 2px;
-//   pointer-events: auto;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// }
-
-// button.desktop {
-//   font-size: 16px;
-//   font-weight: 700;
-//   text-transform: uppercase;
-//   padding: 0 32px;
-//   width: 140px;
-//   height: 56px;
-// }
-
-// button.mobile {
-//   width: 44px;
-//   height: 44px;
-
-//   i {
-//     font-size: 20px;
-//   }
-// }
-
 .nav-container {
   z-index: 20;
   position: absolute;
@@ -127,7 +49,7 @@ const $q = useQuasar();
   align-items: flex-start;
   justify-content: flex-start;
   gap: 64px;
-  background: $ui-background;
+  background: $secondary;
   border-radius: 8px;
   pointer-events: auto;
   padding: 16px;

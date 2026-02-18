@@ -35,7 +35,7 @@ void main() {
     vCloud = mix(1.0, vCloud, 0.1);
 
     // Opacity for center view
-    float opacity = pow(distance(uv, vec2(0.5)), 2.6)  * 2.6;
+    float opacity = pow(distance(uv, vec2(0.5)), 2.8)  * 2.6;
     opacity = smoothstep(0.0, 0.5, opacity);
     float combinedOpacity = clamp(opacity + rainFirstLayer + rainSecondLayer + rainThirdLayer, 0.0, 1.0);
 

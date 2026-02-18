@@ -25,7 +25,7 @@ import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragment.glsl?r
 
 import rainFragmentShader from "src/shaders/rain/rainFragment.glsl?raw";
 import drizzleFragmentShader from "src/shaders/rain/drizzleFragment.glsl?raw";
-
+import thunderstormFragmentShader from "src/shaders/thunderstorm/thunderstormFragment.glsl?raw";
 import snowFragmentShader from "src/shaders/snow/snowFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
@@ -176,7 +176,7 @@ async function setMapStyle() {
   // const weatherMain = data.weather[0].main;
   // const weatherDescription = data.weather[0].description;
   const weatherDescription = "overcast clouds";
-  const weatherMain = "Drizzle";
+  const weatherMain = "Thunderstorm";
   // const weatherMain = "Snow";
 
   weatherStore.setWeatherType(weatherMain);
@@ -262,6 +262,13 @@ async function setMapStyle() {
       case "Snow":
         texturePaths = ["./noise-textures/Perlin24-512x512.png"];
         addShaderLayer("snowLayer", vertexShader, snowFragmentShader);
+        break;
+      case "Thunderstorm":
+        texturePaths = [
+          "./noise-textures/Milky6-512x512.png",
+          "./noise-textures/Perlin24-512x512.png",
+        ];
+        addShaderLayer("thunderstormLayer", vertexShader, thunderstormFragmentShader);
         break;
 
       // Clear sky: no shader needed

@@ -3,9 +3,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import mapboxgl from "mapbox-gl";
-import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
@@ -40,6 +39,7 @@ const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 let currentLayerId = null;
 let displayedStyle = null;
 let texturePaths = [];
+let startTime = performance.now();
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z?fresh=true",
@@ -57,8 +57,6 @@ function removeLayerIfExists(layerId) {
 
 function addShaderLayer(layerId, vertexShader, fragmentShader) {
   removeLayerIfExists(currentLayerId);
-
-  let startTime = performance.now();
 
   map.addLayer({
     id: layerId,

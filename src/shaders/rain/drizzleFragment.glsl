@@ -13,18 +13,16 @@ out vec4 outColor;
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
+    // Set rain speed and create uv
     vec2 speed = vec2(-0.002, 0.1);
     vec2 movingUv = uv + speed * uTime;
 
     // Cloud texture
     float cloud = texture(uTexture0, uv).r;
 
-    // Invert cloud texture
-    float invertedCloud = 1.0 - cloud;
-    invertedCloud = pow(invertedCloud, 2.0) * 1.5;
-
-    // Combine original and inverted textures
-    float combinedCloud = 1.0 - (cloud * invertedCloud);
+    // V curve cloud texture
+    float vCloud = abs((cloud - 0.5) * 2.0);
+    vCloud = mix(1.0, vCloud, 0.1);
 
     // Rain texture: move and stretch vertically
     vec2 stretchedUv = vec2(movingUv.x * 2.0, movingUv.y * 0.03); 
@@ -46,5 +44,5 @@ void main() {
     vec3 color = vec3(0.85, 0.86, 0.87);
     float combinedOpacity = clamp(opacity + rain, 0.0, 1.0);
 
-    outColor = vec4(color * combinedCloud, combinedOpacity);
+    outColor = vec4(color * vCloud, combinedOpacity);
 }

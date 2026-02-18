@@ -53,13 +53,11 @@ void main() {
     vCloud = mix(1.0, vCloud, 0.1);
 
     // Opacity for center view
-    float opacity = distance(uv, vec2(0.5)) * 1.5;
+    float opacity = distance(uv, vec2(0.5));
     opacity = smoothstep(0.0, 0.7, opacity);
-
-    vec3 color = vec3(1.0, 0.0, 0.0);
     float combinedOpacity = clamp(opacity + snowFirstLayer + snowSecondLayer + snowThirdLayer, 0.0, 1.0);
 
+    // Set color
+    vec3 color = vec3(1.0, 1.0, 1.0);
     outColor = vec4(color * vCloud, combinedOpacity);
-    // outColor = vec4(color, snow * snowThirdLayer);
-    outColor = vec4(color, snowFirstLayer + snowSecondLayer + snowThirdLayer);
 }

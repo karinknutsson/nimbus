@@ -1,6 +1,6 @@
 <template>
   <div class="nav-container">
-    <div class="temp-container glass-card">
+    <div v-if="showTempContainer" class="temp-container glass-card">
       <div class="weather-description-container">
         <div class="weather-description-wrapper weather-main">
           {{ weatherStore.weatherType ? weatherStore.weatherType : "&nbsp;" }}
@@ -21,18 +21,25 @@
         </div>
       </div>
     </div>
+    <div v-else></div>
 
     <div class="search-wrapper">
-      <SearchBar />
+      <SearchBar
+        @show-search-suggestions="showTempContainer = false"
+        @hide-search-suggestions="showTempContainer = true"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import SearchBar from "./SearchBar.vue";
 import { useWeatherStore } from "../stores/weather-store";
 
 const weatherStore = useWeatherStore();
+
+const showTempContainer = ref(true);
 </script>
 
 <style scoped lang="scss">
@@ -44,7 +51,7 @@ const weatherStore = useWeatherStore();
   width: 100vw;
   height: 100vh;
   height: 100dvh;
-  padding: 6% 4% 12% 4%;
+  padding: 2% 4% 12% 4%;
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
@@ -100,6 +107,7 @@ body.screen--sm,
 body.screen--xs {
   .nav-container {
     flex-direction: column;
+    padding-top: 6%;
   }
 
   .temp-container {

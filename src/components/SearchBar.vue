@@ -59,6 +59,8 @@ const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
 
+const emit = defineEmits(["showSearchSuggestions", "hideSearchSuggestions"]);
+
 const searchBarFullWidth = computed(() => {
   if ($q.screen.lt.md) {
     return "100%";
@@ -168,7 +170,7 @@ watch(searchBarFullWidth, () => {
       });
     }
   } else {
-    const width = $q.screen.lt.md ? "100%" : "136px";
+    const width = $q.screen.lt.md ? "100%" : "196px";
     gsap.to(".search-bar", {
       duration: 0.3,
       width,
@@ -176,6 +178,19 @@ watch(searchBarFullWidth, () => {
     });
   }
 });
+
+watch(
+  () => searchStore.suggestions.length,
+  (length) => {
+    if ($q.screen.gt.sm) return;
+
+    if (length) {
+      emit("showSearchSuggestions");
+    } else {
+      emit("hideSearchSuggestions");
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">

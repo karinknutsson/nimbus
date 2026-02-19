@@ -102,7 +102,7 @@ function flash() {
   delay += 2.0;
 
   gsap.to("#lightning", {
-    opacity: 0.8,
+    opacity: 0.6,
     duration: 0.06,
     delay,
     ease: "power4.out",
@@ -340,8 +340,8 @@ async function setMapStyle() {
         addShaderLayer("thunderstormLayer", vertexShader, thunderstormFragmentShader);
 
         lightningInterval = setInterval(() => {
-          flash();
-        }, 10000);
+          if (Math.random() > 0.7) flash();
+        }, 5000);
 
         break;
 

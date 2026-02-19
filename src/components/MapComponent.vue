@@ -246,10 +246,7 @@ async function setMapStyle() {
 
       // Precipitation
       case "Rain":
-        texturePaths = [
-          "./noise-textures/Milky6-512x512.png",
-          "./noise-textures/Perlin24-512x512.png",
-        ];
+        texturePaths = [];
         addShaderLayer("rainLayer", vertexShader, rainFragmentShader);
         break;
       case "Drizzle":

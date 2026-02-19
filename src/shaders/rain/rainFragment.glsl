@@ -1,23 +1,13 @@
 #version 300 es
 
-precision mediump float;
+precision highp float;
 
 uniform vec2 uResolution;
 uniform float uTime;
 uniform float uWind;
-uniform sampler2D uTexture0;
-uniform sampler2D uTexture1;
 
 out vec4 outColor;
 
-// float createRainLayer(float speedFactor, float timeFactor, vec2 uv, float textureSize) {
-//     vec2 speed = vec2(speedFactor, timeFactor);
-//     vec2 movingUv = uv * textureSize + speed;
-//     vec2 stretchedUv = vec2(movingUv.x * 2.0, movingUv.y * 0.03); 
-//     float rainTexture = texture(uTexture1, stretchedUv).r;
-//     rainTexture = pow(rainTexture, 8.0);
-//     return rainTexture;
-// }
 
 float random (vec2 st) {
     return fract(sin(dot(st.xy,
@@ -41,9 +31,6 @@ void main() {
     float rainSecondLayer = createRainLayer(uv, 0.2, 20.0, 0.6);
     float rainThirdLayer = createRainLayer(uv, 0.1, 30.0, 0.4);
     float rain = rainFirstLayer + rainSecondLayer + rainThirdLayer;
-    // rain = rainSecondLayer;
-    // rain = rainFirstLayer;
-    // rain = rainThirdLayer;
 
     // Set color
     vec3 color = vec3(1.0, 1.0, 1.0);

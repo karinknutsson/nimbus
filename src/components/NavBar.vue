@@ -2,15 +2,23 @@
   <div class="nav-container">
     <div class="temp-container">
       <div class="weather-description-wrapper-wrapper">
-        <div class="weather-description-wrapper">{{ weatherStore.weatherType }}</div>
         <div class="weather-description-wrapper">
-          {{ "Air temp " + weatherStore.airTemp + "°" }}
+          {{ weatherStore.weatherType ? weatherStore.weatherType : "&nbsp;" }}
         </div>
-        <div class="weather-description-wrapper">{{ weatherStore.windDescription + " wind" }}</div>
+        <div class="weather-description-wrapper">
+          {{ weatherStore.airTemp ? "Air temp " + weatherStore.airTemp + "°" : "&nbsp;" }}
+        </div>
+        <div class="weather-description-wrapper">
+          {{ weatherStore.windDescription ? weatherStore.windDescription + " wind" : "&nbsp;" }}
+        </div>
       </div>
       <div class="feels-like-container">
-        <div class="feels-like-wrapper">Feels like</div>
-        <div class="feels-like-temp-wrapper">{{ weatherStore.feelsLikeTemp + "°" }}</div>
+        <div class="feels-like-wrapper">
+          {{ weatherStore.feelsLikeTemp ? "Feels like" : "&nbsp;" }}
+        </div>
+        <div class="feels-like-temp-wrapper">
+          {{ weatherStore.feelsLikeTemp ? weatherStore.feelsLikeTemp + "°" : "&nbsp;" }}
+        </div>
       </div>
     </div>
 

@@ -1,4 +1,5 @@
 <template>
+  <div id="lightning"></div>
   <div id="map" class="map-container"></div>
 </template>
 
@@ -8,6 +9,7 @@ import mapboxgl from "mapbox-gl";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
+import gsap from "gsap";
 
 import vertexShader from "src/shaders/vertex.glsl?raw";
 
@@ -40,6 +42,81 @@ let currentLayerId = null;
 let displayedStyle = null;
 let texturePaths = [];
 let startTime = performance.now();
+let lightningInterval = null;
+
+function flash() {
+  let delay = 0;
+
+  gsap.to("#lightning", {
+    opacity: 0.8,
+    duration: 0.06,
+    delay,
+    ease: "power4.out",
+  });
+
+  delay += 0.07;
+
+  gsap.to("#lightning", {
+    opacity: 0,
+    duration: 0.06,
+    delay,
+    ease: "power4.in",
+  });
+
+  delay += 1.06;
+
+  gsap.to("#lightning", {
+    opacity: 0.8,
+    duration: 0.06,
+    delay,
+    ease: "power4.out",
+  });
+
+  delay += 0.07;
+
+  gsap.to("#lightning", {
+    opacity: 0,
+    duration: 0.06,
+    delay,
+    ease: "power4.in",
+  });
+
+  delay += 0.36;
+
+  gsap.to("#lightning", {
+    opacity: 0.8,
+    duration: 0.06,
+    delay,
+    ease: "power4.out",
+  });
+
+  delay += 0.18;
+
+  gsap.to("#lightning", {
+    opacity: 0,
+    duration: 0.06,
+    delay,
+    ease: "power4.in",
+  });
+
+  delay += 2.0;
+
+  gsap.to("#lightning", {
+    opacity: 0.6,
+    duration: 0.06,
+    delay,
+    ease: "power4.out",
+  });
+
+  delay += 0.07;
+
+  gsap.to("#lightning", {
+    opacity: 0,
+    duration: 0.06,
+    delay,
+    ease: "power4.in",
+  });
+}
 
 const mapStyles = {
   placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z?fresh=true",
@@ -173,6 +250,8 @@ async function setMapStyle() {
 
   if (!data) return;
 
+  clearInterval(lightningInterval);
+
   const weatherMain = data.weather[0].main;
   const weatherDescription = data.weather[0].description;
   // const weatherMain = "Thunderstorm";
@@ -257,11 +336,13 @@ async function setMapStyle() {
         addShaderLayer("snowLayer", vertexShader, snowFragmentShader);
         break;
       case "Thunderstorm":
-        texturePaths = [
-          "./noise-textures/Milky6-512x512.png",
-          "./noise-textures/Perlin24-512x512.png",
-        ];
+        texturePaths = [];
         addShaderLayer("thunderstormLayer", vertexShader, thunderstormFragmentShader);
+
+        lightningInterval = setInterval(() => {
+          if (Math.random() > 0.7) flash();
+        }, 5000);
+
         break;
 
       // Clear sky: no shader needed
@@ -323,12 +404,13 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.overlay {
+#lightning {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.67);
+  background: rgba(255, 255, 250);
   pointer-events: none;
-  z-index: 2000;
+  z-index: 19;
+  opacity: 0;
 }
 
 :deep(a) {

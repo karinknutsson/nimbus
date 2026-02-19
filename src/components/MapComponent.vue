@@ -263,6 +263,7 @@ async function setMapStyle() {
 
   let currentStyle;
 
+  // Map styles based on temperature ranges
   if (data.main.temp <= 0) {
     currentStyle = "winter";
   } else if (data.main.temp > 0 && data.main.temp <= 10) {
@@ -391,7 +392,7 @@ watch(
 
       map.flyTo({
         center: [lng, lat],
-        zoom: 14,
+        zoom: 10,
         essential: true,
       });
 

@@ -10,14 +10,11 @@ out vec4 outColor;
 
 
 float random (vec2 st) {
-    return fract(sin(dot(st.xy,
-                         vec2(12.9898,78.233)))*
-        43758.5453123);
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
 float createRainLayer(vec2 uv, float timeFactor, float textureSize, float opacity) {
     vec2 gridUv = vec2(uv.x, floor((uv.y + timeFactor * uTime) * textureSize + random(uv)) / textureSize);
-
     float rain = random(gridUv);
     rain = smoothstep(0.9, 1.3, rain) * opacity; 
     return rain;

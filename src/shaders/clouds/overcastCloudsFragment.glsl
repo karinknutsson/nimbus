@@ -24,26 +24,28 @@ vec2 rotateUv(vec2 uv, float angle, vec2 center) {
 void main() {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
-    vec2 speed = vec2(-0.002, -0.001);
-    vec2 movingUv = uv + speed * uTime;
+    // Set speed and rotation based on time and wind
+    vec2 speed = vec2(0.002, 0.001);
+    speed *= uWind * 0.5;
+    float rotation = uTime * 0.003;
+    rotation *= uWind * 0.5;
 
-    movingUv = rotateUv(movingUv, uTime * 0.003, vec2(0.5));
+    // Create moving uv
+    vec2 movingUv = uv + speed * uTime;
+    movingUv = rotateUv(movingUv, rotation, vec2(0.5));
 
     // Cloud texture
     float cloud = texture(uTexture0, movingUv).r;
 
-    // Invert cloud texture
-    float invertedCloud = 1.0 - cloud;
-    invertedCloud = pow(invertedCloud, 2.0) * 1.5;
-
-    // Combine original and inverted textures
-    float combinedCloud = 1.0 - (cloud * invertedCloud);
+    // V curve cloud texture
+    float vCloud = abs((cloud - 0.5) * 2.0);
+    vCloud = mix(1.0, vCloud, 0.1);
 
     // Opacity for center view
-    float opacity = distance(uv, vec2(0.5)) * 1.5;
-    opacity = smoothstep(0.0, 0.7, opacity);
+    float opacity = pow(distance(uv, vec2(0.5)), 1.8)  * 2.6;
+    opacity = smoothstep(0.0, 0.5, opacity);
 
-    vec3 color = vec3(0.85, 0.86, 0.87);
-
-    outColor = vec4(color * combinedCloud, opacity);
+    // Set color
+    vec3 color = vec3(1.0, 1.0, 1.0);
+    outColor = vec4(color * vCloud, opacity);
 }

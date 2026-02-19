@@ -3,9 +3,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, watch } from "vue";
 import mapboxgl from "mapbox-gl";
-import { useQuasar } from "quasar";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
@@ -26,10 +25,11 @@ import fewCloudsFragmentShader from "src/shaders/clouds/fewCloudsFragment.glsl?r
 
 import rainFragmentShader from "src/shaders/rain/rainFragment.glsl?raw";
 import drizzleFragmentShader from "src/shaders/rain/drizzleFragment.glsl?raw";
+import thunderstormFragmentShader from "src/shaders/thunderstorm/thunderstormFragment.glsl?raw";
+import snowFragmentShader from "src/shaders/snow/snowFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
 
-const $q = useQuasar();
 const searchStore = useSearchStore();
 const mapStore = useMapStore();
 const weatherStore = useWeatherStore();
@@ -39,17 +39,16 @@ const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
 let currentLayerId = null;
 let displayedStyle = null;
 let texturePaths = [];
-const x = ref(0);
-const y = ref(0);
+let startTime = performance.now();
 
 const mapStyles = {
-  placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z",
-  winter: "mapbox://styles/karinmiriam/cml9alr3f002501qzdrwabuer",
-  autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
-  spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk",
-  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
-  tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3",
-  desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg",
+  placeholder: "mapbox://styles/karinmiriam/cml9i2zeb001801s88vlc747z?fresh=true",
+  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh?fresh=true",
+  autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl?fresh=true",
+  spring: "mapbox://styles/karinmiriam/cml9h8dgz003f01r07i9h60bk?fresh=true",
+  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di?fresh=true",
+  tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3?fresh=true",
+  desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg?fresh=true",
 };
 
 function removeLayerIfExists(layerId) {
@@ -58,8 +57,6 @@ function removeLayerIfExists(layerId) {
 
 function addShaderLayer(layerId, vertexShader, fragmentShader) {
   removeLayerIfExists(currentLayerId);
-
-  let startTime = performance.now();
 
   map.addLayer({
     id: layerId,
@@ -178,13 +175,13 @@ async function setMapStyle() {
 
   const weatherMain = data.weather[0].main;
   const weatherDescription = data.weather[0].description;
+  // const weatherMain = "Thunderstorm";
 
   weatherStore.setWeatherType(weatherMain);
   weatherStore.setAirTemp(Math.round(data.main.temp));
   weatherStore.setFeelsLike(Math.round(data.main.feels_like));
   weatherStore.setLocation(data.name);
   weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
-  console.log(data);
 
   let currentStyle;
 
@@ -195,16 +192,12 @@ async function setMapStyle() {
   } else if (data.main.temp > 10 && data.main.temp <= 20) {
     currentStyle = "spring";
   } else if (data.main.temp > 20 && data.main.temp <= 30) {
-    console.log("summer");
     currentStyle = "summer";
   } else if (data.main.temp > 30 && data.main.temp <= 40) {
     currentStyle = "tropical";
   } else if (data.main.temp > 40) {
     currentStyle = "desert";
   }
-
-  // const weatherMain = "Clouds";
-  // const weatherDescription = "broken clouds";
 
   function setShader() {
     switch (weatherMain) {
@@ -263,6 +256,17 @@ async function setMapStyle() {
           "./noise-textures/Perlin24-512x512.png",
         ];
         addShaderLayer("drizzleLayer", vertexShader, drizzleFragmentShader);
+        break;
+      case "Snow":
+        texturePaths = ["./noise-textures/Perlin24-512x512.png"];
+        addShaderLayer("snowLayer", vertexShader, snowFragmentShader);
+        break;
+      case "Thunderstorm":
+        texturePaths = [
+          "./noise-textures/Milky6-512x512.png",
+          "./noise-textures/Perlin24-512x512.png",
+        ];
+        addShaderLayer("thunderstormLayer", vertexShader, thunderstormFragmentShader);
         break;
 
       // Clear sky: no shader needed

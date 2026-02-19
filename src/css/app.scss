@@ -96,6 +96,20 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: $charcoal !important;
 }
 
+.glass-card {
+  background: rgba(242, 243, 248, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  box-shadow:
+    0 10px 30px rgba(20, 25, 40, 0.08),
+    0 2px 8px rgba(20, 25, 40, 0.05);
+}
+
 .error-message {
   height: 24px;
   font-size: 13px;

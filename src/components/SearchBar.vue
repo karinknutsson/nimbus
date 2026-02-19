@@ -1,5 +1,5 @@
 <template>
-  <div class="search-bar" ref="searchBarRef">
+  <div class="search-bar glass-card" ref="searchBarRef">
     <form class="search-form">
       <div class="icon-input-container flex-center">
         <button type="button" @click="onOpenSearch" class="search-icon flex-center">
@@ -213,8 +213,6 @@ li {
 
 .search-bar {
   pointer-events: auto;
-  background: $background;
-  border-radius: 8px;
   width: 196px;
   height: 56px;
   padding: 0 8px;

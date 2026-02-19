@@ -15,7 +15,7 @@ float random (vec2 st) {
 float createRainLayer(vec2 uv, float timeFactor, float textureSize, float opacity) {
     vec2 gridUv = vec2(uv.x, floor((uv.y + timeFactor * uTime) * textureSize + random(uv)) / textureSize);
     float rain = random(gridUv);
-    rain = smoothstep(0.9, 1.3, rain) * opacity; 
+    rain = smoothstep(0.9, 1.1, rain) * opacity; 
     return rain;
 }
 
@@ -25,11 +25,12 @@ void main() {
     // Create rain layers
     float rainFirstLayer = createRainLayer(uv, 0.6, 6.0, 1.0);
     float rainSecondLayer = createRainLayer(uv, 0.4, 12.0, 0.8);
-    float rainThirdLayer = createRainLayer(uv, 0.2, 16.0, 0.6);
-    float rainFourthLayer = createRainLayer(uv, 0.1, 20.0, 0.4);
-    float rain = rainFirstLayer + rainSecondLayer + rainThirdLayer + rainFourthLayer;
+    float rain = rainFirstLayer + rainSecondLayer;
 
     // Set color
-    vec3 color = vec3(1.0, 1.0, 1.0);
-    outColor = vec4(color, rain);
+    vec3 darkColor = vec3(0.11, 0.09, 0.15);
+    vec3 lightColor = vec3(0.9, 0.85, 0.95);
+    vec3 finalColor = mix(darkColor, lightColor, rain);
+    float opacity = mix(0.5, 1.0, rain);
+    outColor = vec4(finalColor, opacity);
 }

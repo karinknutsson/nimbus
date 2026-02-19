@@ -28,9 +28,9 @@ void main() {
     float rain = rainFirstLayer + rainSecondLayer;
 
     // Set color
-    vec3 darkColor = vec3(0.11, 0.09, 0.15);
+    vec3 darkColor = vec3(0.125, 0.071, 0.239);
     vec3 lightColor = vec3(0.9, 0.85, 0.95);
     vec3 finalColor = mix(darkColor, lightColor, rain);
-    float opacity = mix(0.5, 1.0, rain);
+    float opacity = mix(0.7, 1.0, rain);
     outColor = vec4(finalColor, opacity);
 }

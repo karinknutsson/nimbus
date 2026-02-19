@@ -7,7 +7,6 @@ export const useWeatherStore = defineStore("weatherStore", {
     weatherType: "",
     airTemp: "",
     feelsLikeTemp: "",
-    feelsLikeDescription: "",
     windSpeed: "",
     windDescription: "",
     location: "",
@@ -25,24 +24,6 @@ export const useWeatherStore = defineStore("weatherStore", {
 
     setFeelsLike(temp) {
       this.feelsLikeTemp = temp;
-
-      if (temp <= -5) {
-        this.feelsLikeDescription = "Icy";
-      } else if (temp <= 4) {
-        this.feelsLikeDescription = "Harsh";
-      } else if (temp <= 9) {
-        this.feelsLikeDescription = "Chilly";
-      } else if (temp <= 15) {
-        this.feelsLikeDescription = "Cool";
-      } else if (temp <= 21) {
-        this.feelsLikeDescription = "Mild";
-      } else if (temp <= 26) {
-        this.feelsLikeDescription = "Warm";
-      } else if (temp <= 31) {
-        this.feelsLikeDescription = "Hot";
-      } else {
-        this.feelsLikeDescription = "Blazing";
-      }
     },
 
     setWindSpeed(speed) {

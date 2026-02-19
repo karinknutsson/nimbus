@@ -12,7 +12,7 @@
           id="searchTerm"
           v-model="searchTerm"
           type="text"
-          placeholder="Search"
+          placeholder="Search locations"
           @focus="onOpenSearch"
           @blur="onBlurSearch"
         />
@@ -105,7 +105,7 @@ function onBlurSearch() {
 
   if (!searchTerm.value) {
     searchStore.isSearchOpen = false;
-    const width = $q.screen.lt.md ? "100%" : "136px";
+    const width = $q.screen.lt.md ? "100%" : "196px";
 
     gsap.to(".search-bar", {
       duration: 0.3,
@@ -215,7 +215,7 @@ li {
   pointer-events: auto;
   background: $secondary;
   border-radius: 8px;
-  width: 136px;
+  width: 196px;
   height: 56px;
   padding: 0 8px;
 }

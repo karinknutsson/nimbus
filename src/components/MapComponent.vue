@@ -252,16 +252,17 @@ async function setMapStyle() {
 
   clearInterval(lightningInterval);
 
-  const weatherMain = data.weather[0].main;
-  const weatherDescription = data.weather[0].description;
-  // const weatherMain = "Thunderstorm";
+  // const weatherMain = data.weather[0].main;
+  // const weatherDescription = data.weather[0].description;
+  const weatherMain = "Clouds";
+  const weatherDescription = "overcast clouds";
 
   weatherStore.setWeatherType(weatherMain);
   weatherStore.setAirTemp(Math.round(data.main.temp));
   weatherStore.setFeelsLike(Math.round(data.main.feels_like));
   weatherStore.setLocation(data.name);
-  weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
-  // weatherStore.setWindSpeed(10);
+  // weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
+  weatherStore.setWindSpeed(15);
 
   let currentStyle;
 

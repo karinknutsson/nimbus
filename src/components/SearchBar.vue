@@ -1,5 +1,5 @@
 <template>
-  <div class="search-bar" ref="searchBarRef">
+  <div class="search-bar glass-card" ref="searchBarRef">
     <form class="search-form">
       <div class="icon-input-container flex-center">
         <button type="button" @click="onOpenSearch" class="search-icon flex-center">
@@ -28,16 +28,17 @@
     </form>
   </div>
 
-  <div v-if="searchStore.suggestions.length" class="search-suggestions">
+  <div v-if="searchStore.suggestions.length" class="search-suggestions glass-card">
     <ul>
       <li v-for="suggestion in searchStore.suggestions">
         <button class="suggestion-list-button" @click="onSelectSuggestion(suggestion)">
           <div class="suggestion-header">
             <h3>{{ suggestion.name }}</h3>
           </div>
-          <div v-if="suggestion.address">{{ suggestion.address }}</div>
+          <div v-if="suggestion.address">
+            {{ suggestion.address }} ({{ (suggestion.distance / 1000).toFixed(2) }} km)
+          </div>
           <div v-else>{{ suggestion.place_formatted }}</div>
-          <div v-if="suggestion.distance">{{ (suggestion.distance / 1000).toFixed(2) }} km</div>
         </button>
       </li>
     </ul>
@@ -58,6 +59,8 @@ const searchTerm = ref("");
 const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
+
+const emit = defineEmits(["showSearchSuggestions", "hideSearchSuggestions"]);
 
 const searchBarFullWidth = computed(() => {
   if ($q.screen.lt.md) {
@@ -168,7 +171,7 @@ watch(searchBarFullWidth, () => {
       });
     }
   } else {
-    const width = $q.screen.lt.md ? "100%" : "136px";
+    const width = $q.screen.lt.md ? "100%" : "196px";
     gsap.to(".search-bar", {
       duration: 0.3,
       width,
@@ -176,15 +179,27 @@ watch(searchBarFullWidth, () => {
     });
   }
 });
+
+watch(
+  () => searchStore.suggestions.length,
+  (length) => {
+    if ($q.screen.gt.sm) return;
+
+    if (length) {
+      emit("showSearchSuggestions");
+    } else {
+      emit("hideSearchSuggestions");
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 8px 0;
+  padding: 16px 0;
   width: 100%;
-  // width: v-bind(searchBarFullWidth);
 }
 
 li {
@@ -202,19 +217,14 @@ li {
   align-items: flex-start;
   border: 0;
   background: transparent;
-  font-size: 14px;
-  padding: 8px;
+  font-size: 0.8rem;
+  padding: 6px 8px;
   color: inherit;
-}
-
-.suggestion-list-button:hover {
-  background: $secondary;
+  border-radius: 12px;
 }
 
 .search-bar {
   pointer-events: auto;
-  background: $secondary;
-  border-radius: 8px;
   width: 196px;
   height: 56px;
   padding: 0 8px;
@@ -233,8 +243,6 @@ li {
   z-index: 5002;
   top: 96px;
   left: 4vw;
-  background: $secondary;
-  border-radius: 8px;
   width: v-bind(searchBarFullWidth);
 }
 
@@ -249,7 +257,7 @@ li {
 }
 
 .search-icon {
-  color: $primary;
+  color: $charcoal;
   border: 0;
   padding: 8px;
   background: transparent;
@@ -260,7 +268,7 @@ li {
   background: transparent;
   border: 0;
   border-radius: 50%;
-  color: $primary;
+  color: $charcoal;
   padding: 8px;
   margin-left: 8px;
 }
@@ -272,9 +280,10 @@ i {
 .suggestion-header {
   h3 {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 0.9rem;
     margin: 0;
     line-height: 120%;
+    text-align: left;
   }
 }
 
@@ -286,7 +295,7 @@ body.screen--xs {
 
   .search-suggestions {
     top: unset;
-    bottom: calc(16vw + 64px);
+    bottom: calc(12vw + 64px);
     width: 92vw;
   }
 }

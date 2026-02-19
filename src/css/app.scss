@@ -76,10 +76,6 @@ input::placeholder {
   color: $charcoal;
 }
 
-button.submit:focus {
-  outline: none;
-}
-
 button:focus {
   outline: none;
 }
@@ -108,19 +104,4 @@ input:-webkit-autofill:active {
   box-shadow:
     0 10px 30px rgba(20, 25, 40, 0.08),
     0 2px 8px rgba(20, 25, 40, 0.05);
-}
-
-.error-message {
-  height: 24px;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 2px;
-
-  .icon {
-    font-size: 14px;
-    transform: translateY(-1px);
-  }
 }

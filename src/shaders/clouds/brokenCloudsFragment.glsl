@@ -7,6 +7,7 @@ uniform float uTime;
 uniform float uWind;
 uniform sampler2D uTexture0;
 
+
 out vec4 outColor;
 
 vec2 rotateUv(vec2 uv, float angle, vec2 center) {

@@ -12,6 +12,7 @@ import { useWeatherStore } from "src/stores/weather-store";
 import gsap from "gsap";
 
 import vertexShader from "src/shaders/vertex.glsl?raw";
+import rotatingVertexShader from "src/shaders/rotatingVertex.glsl?raw";
 
 import fogFragmentShader from "src/shaders/atmosphere/fogFragment.glsl?raw";
 import mistFragmentShader from "src/shaders/atmosphere/mistFragment.glsl?raw";
@@ -149,7 +150,7 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
       if (!this.program) return;
 
       // Set attributes and uniforms
-      this.aPos = gl.getAttribLocation(this.program, "a_pos");
+      this.aPos = gl.getAttribLocation(this.program, "aPosition");
       this.uResolution = gl.getUniformLocation(this.program, "uResolution");
       this.uTime = gl.getUniformLocation(this.program, "uTime");
       this.uWind = gl.getUniformLocation(this.program, "uWind");
@@ -252,8 +253,11 @@ async function setMapStyle() {
 
   clearInterval(lightningInterval);
 
-  const weatherMain = data.weather[0].main;
-  const weatherDescription = data.weather[0].description;
+  // const weatherMain = data.weather[0].main;
+  // const weatherDescription = data.weather[0].description;
+
+  const weatherMain = "Clouds";
+  const weatherDescription = "scattered clouds";
 
   weatherStore.setWeatherType(weatherMain);
   weatherStore.setAirTemp(Math.round(data.main.temp));
@@ -315,7 +319,11 @@ async function setMapStyle() {
         } else if (weatherDescription.includes("broken")) {
           addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
         } else if (weatherDescription.includes("scattered")) {
-          addShaderLayer("scatteredCloudsLayer", vertexShader, scatteredCloudsFragmentShader);
+          addShaderLayer(
+            "scatteredCloudsLayer",
+            rotatingVertexShader,
+            scatteredCloudsFragmentShader,
+          );
         } else {
           addShaderLayer("fewCloudsLayer", vertexShader, fewCloudsFragmentShader);
         }

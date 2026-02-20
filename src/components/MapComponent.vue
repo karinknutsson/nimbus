@@ -33,6 +33,7 @@ import thunderstormFragmentShader from "src/shaders/thunderstorm/thunderstormFra
 import snowFragmentShader from "src/shaders/snow/snowFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
+import { flash } from "src/utils/flash.js";
 
 const searchStore = useSearchStore();
 const mapStore = useMapStore();
@@ -52,82 +53,7 @@ const mapboxCtrlOpacity = ref(1);
 const cloudColor = computed(() =>
   isDay.value ? { r: 1.0, g: 1.0, b: 1.0 } : { r: 0.29, g: 0.28, b: 0.3 },
 );
-
 const cloudClamp = computed(() => (isDay.value ? 0.8 : 1.0));
-
-function flash() {
-  let delay = 0;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 1.06;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 0.36;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.18;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 2.0;
-
-  gsap.to("#lightning", {
-    opacity: 0.6,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-}
 
 const mapStyles = {
   night: "mapbox://styles/karinmiriam/cmlur55uh003o01sd830t990c?fresh=true",
@@ -232,18 +158,23 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
         gl.uniform1i(this.textureUniforms[i], t.unit);
       });
 
+      // Draw fullscreen quad
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.enableVertexAttribArray(this.aPos);
       gl.vertexAttribPointer(this.aPos, 2, gl.FLOAT, false, 0, 0);
 
+      // Enable blending for transparency
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
+      // Draw the quad
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
+      // Clean up
       gl.disableVertexAttribArray(this.aPos);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+      // Force Mapbox to repaint the map after rendering the shader layer
       map.triggerRepaint();
     },
 
@@ -259,29 +190,32 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 }
 
 async function setMapStyle() {
+  // Fetch weather data for current coordinates
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
-
   if (!data) return;
 
+  // Clear any existing lightning intervals
   clearInterval(lightningInterval);
 
+  // Extract weather info
   const weatherMain = data.weather[0].main;
   const weatherDescription = data.weather[0].description;
 
+  // Determine if day or night
   const now = data.dt;
   const sunrise = data.sys.sunrise;
   const sunset = data.sys.sunset;
-
   isDay.value = now >= sunrise && now < sunset;
 
+  // Update weather store with new data
   weatherStore.setWeatherType(weatherMain, isDay.value);
   weatherStore.setAirTemp(Math.round(data.main.temp));
   weatherStore.setFeelsLike(Math.round(data.main.feels_like));
   weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
 
+  // Map styles based on temperature ranges
   let currentStyle;
 
-  // Map styles based on temperature ranges
   if (!isDay.value) {
     currentStyle = "night";
   } else if (data.main.temp <= 0) {

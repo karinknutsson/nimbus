@@ -9,6 +9,7 @@ import mapboxgl from "mapbox-gl";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
 import { useWeatherStore } from "src/stores/weather-store";
+import { useQuasar } from "quasar";
 import gsap from "gsap";
 
 import vertexShader from "src/shaders/vertex.glsl?raw";
@@ -32,10 +33,12 @@ import thunderstormFragmentShader from "src/shaders/thunderstorm/thunderstormFra
 import snowFragmentShader from "src/shaders/snow/snowFragment.glsl?raw";
 
 import { createProgram, createFullscreenQuad } from "src/utils/shader-helpers";
+import { flash } from "src/utils/flash.js";
 
 const searchStore = useSearchStore();
 const mapStore = useMapStore();
 const weatherStore = useWeatherStore();
+const $q = useQuasar();
 
 let map;
 const apiKey = import.meta.env.VITE_MAPBOX_API_KEY;
@@ -44,96 +47,22 @@ let displayedStyle = null;
 let texturePaths = [];
 let startTime = performance.now();
 let lightningInterval = null;
-let isDay = ref(true);
+const isDay = ref(true);
+const mapboxCtrlOpacity = ref(0.8);
 
 const cloudColor = computed(() =>
   isDay.value ? { r: 1.0, g: 1.0, b: 1.0 } : { r: 0.29, g: 0.28, b: 0.3 },
 );
-
 const cloudClamp = computed(() => (isDay.value ? 0.8 : 1.0));
 
-function flash() {
-  let delay = 0;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 1.06;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 0.36;
-
-  gsap.to("#lightning", {
-    opacity: 0.8,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.18;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-
-  delay += 2.0;
-
-  gsap.to("#lightning", {
-    opacity: 0.6,
-    duration: 0.06,
-    delay,
-    ease: "power4.out",
-  });
-
-  delay += 0.07;
-
-  gsap.to("#lightning", {
-    opacity: 0,
-    duration: 0.06,
-    delay,
-    ease: "power4.in",
-  });
-}
-
 const mapStyles = {
-  night: "mapbox://styles/karinmiriam/cmlur55uh003o01sd830t990c?fresh=true",
-  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh?fresh=true",
-  autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl?fresh=true",
-  spring: "mapbox://styles/karinmiriam/cmluqyq74000801sog67y0wrm?fresh=true",
-  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di?fresh=true",
-  tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3?fresh=true",
-  desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg?fresh=true",
+  night: "mapbox://styles/karinmiriam/cmlur55uh003o01sd830t990c",
+  winter: "mapbox://styles/karinmiriam/cmls357u9000601qz21wtbivh",
+  autumn: "mapbox://styles/karinmiriam/cml9fuw9f006c01sj5hqd6ytl",
+  spring: "mapbox://styles/karinmiriam/cmluqyq74000801sog67y0wrm",
+  summer: "mapbox://styles/karinmiriam/cmlrol2w7001m01qo4vvwb0di",
+  tropical: "mapbox://styles/karinmiriam/cml9hqmkw000t01s7frzh09k3",
+  desert: "mapbox://styles/karinmiriam/cml9hvfca003j01r0d3jjcbkg",
 };
 
 function removeLayerIfExists(layerId) {
@@ -229,18 +158,23 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
         gl.uniform1i(this.textureUniforms[i], t.unit);
       });
 
+      // Draw fullscreen quad
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
       gl.enableVertexAttribArray(this.aPos);
       gl.vertexAttribPointer(this.aPos, 2, gl.FLOAT, false, 0, 0);
 
+      // Enable blending for transparency
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
+      // Draw the quad
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
+      // Clean up
       gl.disableVertexAttribArray(this.aPos);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+      // Force Mapbox to repaint the map after rendering the shader layer
       map.triggerRepaint();
     },
 
@@ -256,29 +190,32 @@ function addShaderLayer(layerId, vertexShader, fragmentShader) {
 }
 
 async function setMapStyle() {
+  // Fetch weather data for current coordinates
   const data = await weatherStore.fetchWeatherData(mapStore.lng, mapStore.lat);
-
   if (!data) return;
 
+  // Clear any existing lightning intervals
   clearInterval(lightningInterval);
 
+  // Extract weather info
   const weatherMain = data.weather[0].main;
   const weatherDescription = data.weather[0].description;
 
+  // Determine if day or night
   const now = data.dt;
   const sunrise = data.sys.sunrise;
   const sunset = data.sys.sunset;
-
   isDay.value = now >= sunrise && now < sunset;
 
+  // Update weather store with new data
   weatherStore.setWeatherType(weatherMain, isDay.value);
   weatherStore.setAirTemp(Math.round(data.main.temp));
   weatherStore.setFeelsLike(Math.round(data.main.feels_like));
   weatherStore.setWindSpeed(Math.round(data.wind.speed * 3.6));
 
+  // Map styles based on temperature ranges
   let currentStyle;
 
-  // Map styles based on temperature ranges
   if (!isDay.value) {
     currentStyle = "night";
   } else if (data.main.temp <= 0) {
@@ -372,6 +309,7 @@ async function setMapStyle() {
     }
   }
 
+  // Only update style if it has changed to prevent unnecessary reloads
   if (currentStyle !== displayedStyle) {
     map.setStyle(mapStyles[currentStyle]);
     displayedStyle = currentStyle;
@@ -385,6 +323,7 @@ async function setMapStyle() {
 }
 
 onMounted(async () => {
+  // Initialize Mapbox map
   map = new mapboxgl.Map({
     container: "map",
     style: mapStyles.placeholder,
@@ -394,8 +333,10 @@ onMounted(async () => {
     accessToken: apiKey ?? "",
   });
 
+  // Set style and shader based on weather data
   await setMapStyle();
 
+  // Fade in map once style is loaded
   map.on("style.load", () => {
     gsap.to("#map", {
       opacity: 1,
@@ -404,6 +345,7 @@ onMounted(async () => {
     });
   });
 
+  // Update weather and map style on map move
   map.on("moveend", async () => {
     mapStore.setCoordinates(map.getCenter().lng, map.getCenter().lat);
     mapStore.setZoom(map.getZoom());
@@ -429,6 +371,15 @@ watch(
     }
   },
 );
+
+watch(
+  () => searchStore.isSearchFocused,
+  (isOpen) => {
+    if ($q.screen.gt.sm) return;
+
+    isOpen ? (mapboxCtrlOpacity.value = 0) : (mapboxCtrlOpacity.value = 0.8);
+  },
+);
 </script>
 
 <style scoped lang="scss">
@@ -448,7 +399,12 @@ watch(
 :deep(a) {
   color: $charcoal;
   text-decoration: none;
-  font-size: 8px;
+  font-size: 10px;
+  opacity: v-bind(mapboxCtrlOpacity);
+}
+
+:deep(.mapboxgl-ctrl) {
+  opacity: v-bind(mapboxCtrlOpacity);
 }
 
 :deep(.mapboxgl-marker) {

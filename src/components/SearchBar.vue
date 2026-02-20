@@ -56,19 +56,12 @@ import gsap from "gsap";
 const $q = useQuasar();
 const searchStore = useSearchStore();
 const searchTerm = ref("");
-const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
+const searchBarFullWidth = ref("420px");
+const searchBarMarginBottom = ref("32px");
 
 const emit = defineEmits(["showSearchSuggestions", "hideSearchSuggestions"]);
-
-const searchBarFullWidth = computed(() => {
-  if ($q.screen.lt.md) {
-    return "100%";
-  } else {
-    return "420px";
-  }
-});
 
 function clearSearchTerm() {
   searchTerm.value = "";
@@ -85,14 +78,18 @@ async function onOpenSearch() {
   if (searchStore.isSearchOpen) return;
 
   searchStore.isSearchOpen = true;
-  isSearchFocused.value = true;
+  searchStore.isSearchFocused = true;
 
-  gsap.to(".search-bar", {
-    duration: 0.3,
-    width: searchBarFullWidth.value,
-    ease: "power2.out",
-    delay: 0.2,
-  });
+  searchBarMarginBottom.value = "0";
+
+  if ($q.screen.gt.sm) {
+    gsap.to(".search-bar", {
+      width: searchBarFullWidth.value,
+      duration: 0.3,
+      ease: "power2.out",
+      delay: 0.2,
+    });
+  }
 
   await nextTick();
 
@@ -102,25 +99,17 @@ async function onOpenSearch() {
 }
 
 function onBlurSearch() {
-  setTimeout(() => {
-    isSearchFocused.value = false;
-  }, 300);
+  searchStore.isSearchFocused = false;
+  searchBarMarginBottom.value = "32px";
 
   if (!searchTerm.value) {
     searchStore.isSearchOpen = false;
-    const width = $q.screen.lt.md ? "100%" : "196px";
 
-    gsap.to(".search-bar", {
-      duration: 0.3,
-      width,
-      ease: "power2.out",
-    });
-
-    if ($q.screen.lt.md) {
-      gsap.to(".search-input", {
-        padding: "0",
-        duration: 0.1,
-        delay: 0.2,
+    if ($q.screen.gt.sm) {
+      gsap.to(".search-bar", {
+        duration: 0.3,
+        width: "196px",
+        ease: "power2.out",
       });
     }
   }
@@ -228,6 +217,7 @@ li {
   width: 196px;
   height: 56px;
   padding: 0 8px;
+  margin-bottom: v-bind(searchBarMarginBottom);
 }
 
 .search-form {
@@ -295,8 +285,10 @@ body.screen--xs {
 
   .search-suggestions {
     top: unset;
-    bottom: calc(12vw + 64px);
-    width: 92vw;
+    left: unset;
+    bottom: calc(12vw + 30px);
+    margin-bottom: v-bind(searchBarMarginBottom);
+    width: calc(100vw - 16px);
   }
 }
 </style>

@@ -1,6 +1,6 @@
-# Clowdy
+# Nimbus
 
-Clowdy is a combined map and weather app built with Quasar, Mapbox, and the OpenWeather API. It provides an interactive map with live weather data and a responsive interface.
+Nimbus is a combined map and weather app built with Quasar, Mapbox, and the OpenWeather API. It provides an interactive map with live weather data and a responsive interface.
 
 ## Features
 
@@ -19,8 +19,8 @@ Clowdy is a combined map and weather app built with Quasar, Mapbox, and the Open
 1. Clone the repo:
 
 ```bash
-git clone https://github.com/karinknutsson/clowdy.git
-cd clowdy
+git clone https://github.com/karinknutsson/Nimbus.git
+cd Nimbus
 ```
 
 2. Install dependencies:

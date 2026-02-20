@@ -48,7 +48,7 @@ let texturePaths = [];
 let startTime = performance.now();
 let lightningInterval = null;
 const isDay = ref(true);
-const mapboxCtrlOpacity = ref(1);
+const mapboxCtrlOpacity = ref(0.8);
 
 const cloudColor = computed(() =>
   isDay.value ? { r: 1.0, g: 1.0, b: 1.0 } : { r: 0.29, g: 0.28, b: 0.3 },
@@ -372,7 +372,7 @@ watch(
   (isOpen) => {
     if ($q.screen.gt.sm) return;
 
-    isOpen ? (mapboxCtrlOpacity.value = 0) : (mapboxCtrlOpacity.value = 1);
+    isOpen ? (mapboxCtrlOpacity.value = 0) : (mapboxCtrlOpacity.value = 0.8);
   },
 );
 </script>
@@ -394,7 +394,7 @@ watch(
 :deep(a) {
   color: $charcoal;
   text-decoration: none;
-  font-size: 8px;
+  font-size: 10px;
   opacity: v-bind(mapboxCtrlOpacity);
 }
 

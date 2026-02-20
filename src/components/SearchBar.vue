@@ -280,7 +280,7 @@ i {
 body.screen--sm,
 body.screen--xs {
   .search-bar {
-    width: 100%;
+    width: calc(100vw - 16px);
   }
 
   .search-suggestions {

@@ -257,7 +257,7 @@ async function setMapStyle() {
   // const weatherDescription = data.weather[0].description;
 
   const weatherMain = "Clouds";
-  const weatherDescription = "scattered clouds";
+  const weatherDescription = "broken clouds";
 
   weatherStore.setWeatherType(weatherMain);
   weatherStore.setAirTemp(Math.round(data.main.temp));
@@ -317,7 +317,7 @@ async function setMapStyle() {
         if (weatherDescription.includes("overcast")) {
           addShaderLayer("overcastCloudsLayer", vertexShader, overcastCloudsFragmentShader);
         } else if (weatherDescription.includes("broken")) {
-          addShaderLayer("brokenCloudsLayer", vertexShader, brokenCloudsFragmentShader);
+          addShaderLayer("brokenCloudsLayer", rotatingVertexShader, brokenCloudsFragmentShader);
         } else if (weatherDescription.includes("scattered")) {
           addShaderLayer(
             "scatteredCloudsLayer",

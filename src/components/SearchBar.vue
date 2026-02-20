@@ -56,20 +56,12 @@ import gsap from "gsap";
 const $q = useQuasar();
 const searchStore = useSearchStore();
 const searchTerm = ref("");
-const isSearchFocused = ref(false);
 const searchBarRef = ref(null);
 const searchInputRef = ref(null);
+const searchBarFullWidth = ref("420px");
 const searchBarMarginBottom = ref("32px");
 
 const emit = defineEmits(["showSearchSuggestions", "hideSearchSuggestions"]);
-
-const searchBarFullWidth = computed(() => {
-  if ($q.screen.lt.md) {
-    return "100%";
-  } else {
-    return "420px";
-  }
-});
 
 function clearSearchTerm() {
   searchTerm.value = "";
@@ -293,8 +285,10 @@ body.screen--xs {
 
   .search-suggestions {
     top: unset;
-    bottom: calc(12vw + 36px);
-    width: 92vw;
+    left: unset;
+    bottom: calc(12vw + 30px);
+    margin-bottom: v-bind(searchBarMarginBottom);
+    width: calc(100vw - 16px);
   }
 }
 </style>

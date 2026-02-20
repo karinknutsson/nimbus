@@ -232,7 +232,7 @@ li {
   position: absolute;
   z-index: 5002;
   top: 96px;
-  left: 4vw;
+  left: 40px;
   width: v-bind(searchBarFullWidth);
 }
 

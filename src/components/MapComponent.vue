@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
@@ -311,10 +311,10 @@ async function setMapStyle() {
 
   // Only update style if it has changed to prevent unnecessary reloads
   if (currentStyle !== displayedStyle) {
-    map.setStyle(mapStyles[currentStyle]);
+    map.setStyle(mapStyles[currentStyle], { diff: false });
     displayedStyle = currentStyle;
 
-    map.on("style.load", () => {
+    map.once("style.load", () => {
       setShader();
     });
   } else {
@@ -326,7 +326,6 @@ onMounted(async () => {
   // Initialize Mapbox map
   map = new mapboxgl.Map({
     container: "map",
-    style: mapStyles.placeholder,
     style: null,
     zoom: mapStore.zoom,
     center: [mapStore.lng, mapStore.lat],
@@ -352,6 +351,12 @@ onMounted(async () => {
 
     await setMapStyle();
   });
+});
+
+onUnmounted(() => {
+  clearInterval(lightningInterval);
+
+  if (map) map.remove();
 });
 
 watch(

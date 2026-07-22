@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import mapboxgl from "mapbox-gl";
 import { useSearchStore } from "src/stores/search-store";
 import { useMapStore } from "src/stores/map-store";
@@ -314,7 +314,7 @@ async function setMapStyle() {
     map.setStyle(mapStyles[currentStyle]);
     displayedStyle = currentStyle;
 
-    map.on("style.load", () => {
+    map.once("style.load", () => {
       setShader();
     });
   } else {
@@ -351,6 +351,12 @@ onMounted(async () => {
 
     await setMapStyle();
   });
+});
+
+onUnmounted(() => {
+  clearInterval(lightningInterval);
+
+  if (map) map.remove();
 });
 
 watch(

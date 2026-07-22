@@ -402,15 +402,24 @@ watch(
 }
 
 :deep(a) {
-  color: white;
+  color: #777;
   opacity: v-bind(mapboxCtrlOpacity);
+  border-radius: 2px;
 }
 
 :deep(.mapboxgl-ctrl) {
   opacity: v-bind(mapboxCtrlOpacity);
-  color: white;
+  color: #777;
   font-family: "Sofia Sans", sans-serif;
   background: transparent;
+}
+
+:deep(a:focus) {
+  outline: none;
+}
+
+:deep(a:focus-visible) {
+  outline: 2px solid #4147e6;
 }
 
 .map-container {

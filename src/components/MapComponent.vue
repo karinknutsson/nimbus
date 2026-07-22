@@ -311,7 +311,7 @@ async function setMapStyle() {
 
   // Only update style if it has changed to prevent unnecessary reloads
   if (currentStyle !== displayedStyle) {
-    map.setStyle(mapStyles[currentStyle]);
+    map.setStyle(mapStyles[currentStyle], { diff: false });
     displayedStyle = currentStyle;
 
     map.once("style.load", () => {

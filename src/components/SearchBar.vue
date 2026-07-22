@@ -31,7 +31,11 @@
   <div v-if="searchStore.suggestions.length" class="search-suggestions glass-card">
     <ul>
       <li v-for="suggestion in searchStore.suggestions">
-        <button class="suggestion-list-button" @click="onSelectSuggestion(suggestion)">
+        <button
+          :key="suggestion"
+          class="suggestion-list-button"
+          @click="onSelectSuggestion(suggestion)"
+        >
           <div class="suggestion-header">
             <h3>{{ suggestion.name }}</h3>
           </div>

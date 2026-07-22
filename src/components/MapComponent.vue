@@ -326,7 +326,6 @@ onMounted(async () => {
   // Initialize Mapbox map
   map = new mapboxgl.Map({
     container: "map",
-    style: mapStyles.placeholder,
     style: null,
     zoom: mapStore.zoom,
     center: [mapStore.lng, mapStore.lat],
